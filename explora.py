@@ -41,41 +41,143 @@ class Abertura(Scene):
 ############################################
 class Intermediario(Scene):
     def construct(self):
-      # Exibindo título e movendo para o topo
-      titulo = TextMobject("Produtos Notáveis")
-      titulo.scale(3.5)
-      titulo.set_color("#dc6a40")
+        # Exibindo título e movendo para o topo
+        titulo = TextMobject("Produtos Notáveis")
+        titulo.set_color("#dc6a40")
+        titulo_top = titulo.copy()
 
-      titulo_top = TextMobject("Produtos Notáveis")
-      titulo_top.scale(1)
-      titulo_top.set_color("#dc6a40")
-      titulo_top.to_edge(UP)
+        titulo.scale(3.5)
+        titulo_top.scale(1)
+        titulo_top.to_edge(UP)
 
-      self.add(titulo)
+        self.add(titulo)
 
-      self.wait(2)
-      self.play(Transform(titulo,titulo_top))     
-      self.wait(1)
+        self.wait(2)
+        self.play(Transform(titulo,titulo_top))     
+        self.wait(1)
 
-      # Criando os quadrados a partir de retas
-      tamanho_a = 4
-      reta_a = Line(np.array([0,-2,0]), np.array([tamanho_a,-2,0]))
+        # Define os pontos que criam o quadrado A
+        pontos_a = [
+            np.array([-3,-3,0]),
+            np.array([1,-3,0]),
+            np.array([1,1,0]),
+            np.array([-3,1,0])
+        ]
 
-      legenda_a = TextMobject("a")
-      legenda_a.next_to(reta_a,DOWN)
+        # Retas para quadrado a e legendas
+        reta_a_x = Line(pontos_a[0],pontos_a[1], color=apatita)
+        reta_a_y = Line(pontos_a[0],pontos_a[3], color=apatita)
+        legenda_a_x = TextMobject("a")
+        legenda_a_x.next_to(reta_a_x,DOWN)
 
-      quadrado_a = Square(
-        fill_color = apatita,
-        fill_opacity = .7,
-        color = apatita,
-        side_length = tamanho_a)
-      quadrado_a.to_edge(
-        (reta_a.get_corner(LEFT) + (tamanho_a/2))*LEFT,
-         reta_a.get_center()) # escolher uma cordenada que corresponde a linha
+        legenda_a_y = legenda_a_x.copy()
+        legenda_a_y.next_to(reta_a_y,LEFT)
 
-      self.play(ShowCreation(reta_a),Write(legenda_a))
-      self.wait(0.5)
-      self.play(Transform(reta_a,quadrado_a))
+        # Animação quadrado a
+        self.play(
+            ShowCreation(reta_a_x),
+            Write(legenda_a_x)
+        )
+        self.wait(0.5)
+        self.play(
+            ShowCreation(reta_a_y),
+            Write(legenda_a_y)
+        )
+        self.wait(0.7)
+
+        quadrado_a = Polygon(
+            pontos_a[0],
+            pontos_a[1], 
+            pontos_a[2], 
+            pontos_a[3], 
+            fill_color=apatita, 
+            fill_opacity=0.7
+        )
+        legenda_a = TexMobject("{a}^{2}")
+        legenda_a.move_to(quadrado_a.get_center())
+        self.play(
+            ShowCreation(quadrado_a),
+            ShowCreation(legenda_a),
+            FadeOut(reta_a_x),
+            FadeOut(reta_a_y),
+        )        
+        self.wait(1)
+
+        # Criando quadrado b
+        diferenca = 2
+        pontos_b = [
+            pontos_a[2],
+            pontos_a[2] + diferenca * RIGHT,
+            pontos_a[2] + diferenca * UR,
+            pontos_a[2] + diferenca * UP
+        ]
+
+        # Retas para quadrado b
+        reta_b_x = Line(pontos_b[0],pontos_b[1], color=papoula)
+        reta_b_y = Line(pontos_b[0],pontos_b[3], color=papoula)
+        legenda_b_x = TextMobject("b")
+        legenda_b_x.next_to(reta_b_x,DOWN)
+
+        legenda_b_y = legenda_b_x.copy()
+        legenda_b_y.next_to(reta_b_y,LEFT)
+
+        # Animação quadrado b
+        self.play(
+            ShowCreation(reta_b_x),
+            Write(legenda_b_x)
+        )
+        self.wait(0.5)
+        self.play(
+            ShowCreation(reta_b_y),
+            Write(legenda_b_y)
+        )
+        self.wait(0.7)
+
+        quadrado_b = Polygon(
+            pontos_b[0],
+            pontos_b[1],
+            pontos_b[2],
+            pontos_b[3],
+            fill_color=papoula,
+            fill_opacity=0.7,
+            color=papoula
+        )
+        legenda_b = TexMobject("{b}^{2}")
+        legenda_b.move_to(quadrado_b.get_center())
+        self.play(
+            ShowCreation(quadrado_b),
+            ShowCreation(legenda_b),
+            FadeOut(reta_b_x),
+            FadeOut(reta_b_y),
+        )  
+        self.wait(0.7)
+
+        # Criando retangulos laterais
+        retangulo_d = Polygon(
+            pontos_a[1],
+            pontos_a[1] + diferenca * RIGHT,
+            pontos_b[1],
+            pontos_b[0],
+            fill_color='#F2E33A',
+            fill_opacity=0.7,
+            color='#F2E33A'
+        )
+
+        retangulo_t = Polygon(
+            pontos_a[3],
+            pontos_a[2],
+            pontos_b[3],
+            pontos_a[3] + diferenca * UP,
+            fill_color='#F2E33A',
+            fill_opacity=0.7,
+            color='#F2E33A'
+        )
+
+        self.play(
+            ShowCreation(retangulo_d),
+            ShowCreation(retangulo_t)
+        )
+        self.wait(1)
 
 ############################################
 # Cena de fechamento
@@ -93,7 +195,7 @@ class Fechamento(Scene):
       site.set_color(WHITE)
       site.shift(0.8*UP)
 
-      autor=TextMobject("Animações: Autor")
+      autor=TextMobject("Animações: Ariel Tadeu da Silva")
       autor.scale(1.2)
       autor.set_color("#dc6a40")
       autor.shift(0.3*DOWN)
