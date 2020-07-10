@@ -216,7 +216,7 @@ class Intermediario_produto(Scene):
         equacao_final.to_edge(UP)
 
         total = 2.5
-        b = 1
+        b = 1.
         a = total - b
         pontos_quadrado_total = [
             np.array([-total,-total,0]),
@@ -224,13 +224,6 @@ class Intermediario_produto(Scene):
             np.array([total,total,0]),
             np.array([-total,total,0])
         ]
-        quadrado_total = Polygon(
-            pontos_quadrado_total[0],
-            pontos_quadrado_total[1],
-            pontos_quadrado_total[2],
-            pontos_quadrado_total[3],
-            color = '#000000'
-        )
 
         # Quadrado a
         linha_a_x = Line(pontos_quadrado_total[0], (pontos_quadrado_total[1] - (b * RIGHT)), color = papoula)
@@ -280,7 +273,7 @@ class Intermediario_produto(Scene):
         ]
 
         linha_soma_b = Line(pontos_soma_b[0], pontos_soma_b[1], color = apatita)
-        legenda_b_x = TextMobject("b")
+        legenda_b_x = TexMobject("b")
         legenda_b_x.next_to(linha_soma_b, DOWN)
 
         linha_diferenca_b = Line(pontos_quadrado_a[3], (pontos_quadrado_a[3] - (b * UP)), color = apatita)
@@ -313,53 +306,41 @@ class Intermediario_produto(Scene):
             pontos_quadrado_b[2],
             pontos_quadrado_b[3],
             fill_color = apatita,
-            fill_opacity = 0.7,
+            fill_opacity = 0.5,
             color = apatita
         )
 
         legenda_b = TexMobject("{b}^2")
         legenda_b.move_to(quadrado_b.get_center())
 
-        # Regiões com mesma área
-        pontos_soma_ab = [
-            pontos_quadrado_a[1],
-            pontos_soma_b[1],
-            pontos_quadrado_b[1],
-            pontos_quadrado_b[0],
-        ]
-
-        pontos_diferenca_ab = [
-            pontos_diferenca_b[0],
-            pontos_quadrado_b[0],
-            pontos_quadrado_b[3],
-            pontos_diferenca_b[3],
-        ]
-
-        soma_ab = Polygon(
-            pontos_soma_ab[0],
-            pontos_soma_ab[1],
-            pontos_soma_ab[2],
-            pontos_soma_ab[3],
-            fill_color = starship,
-            fill_opacity = 0.7,
-            color = starship
+        # Rotação dos retângulos
+        grupo_diferenca = VGroup(
+            legenda_b_y, legenda_a_x, linha_diferenca_b, retangulo_diferenca_b
         )
-
-        diferenca_ab = Polygon(
-            pontos_diferenca_ab[0],
-            pontos_diferenca_ab[1],
-            pontos_diferenca_ab[2],
-            pontos_diferenca_ab[3],
-            fill_color = starship,
-            fill_opacity = 0.7,
-            color = starship
+        grupo_soma = VGroup(
+            legenda_b_x, legenda_a_y, retangulo_soma_b
         )
+        igualdade = TexMobject('=')
+        igualdade.move_to(np.array([0,1,0]) * grupo_soma.get_center())
+        transformacao_y = np.array(
+            [-1,1,1]
+        )
+        reflexo_soma_b = transformacao_y * retangulo_soma_b.get_center()
 
         # Retângulo final
         pontos_retangulo_final = [
             pontos_quadrado_a[0],
             pontos_soma_b[1],
             pontos_quadrado_b[1],
+            pontos_diferenca_b[0],
+        ]
+
+        pontos_poligono_final = [
+            pontos_quadrado_a[0],
+            pontos_soma_b[1],
+            pontos_quadrado_b[2],
+            pontos_quadrado_b[3],
+            pontos_quadrado_b[0],
             pontos_diferenca_b[0],
         ]
 
@@ -372,8 +353,22 @@ class Intermediario_produto(Scene):
             fill_opacity = 0.7,
             color = papoula            
         )
-        legenda_retangulo_final = legenda_a.copy()
+        legenda_retangulo_final = TexMobject('{a}^2-{b}^2')
         legenda_retangulo_final.move_to(retangulo_final.get_center())
+
+        poligono_final = Polygon(
+            pontos_poligono_final[0],
+            pontos_poligono_final[1],
+            pontos_poligono_final[2],
+            pontos_poligono_final[3],
+            pontos_poligono_final[4],
+            pontos_poligono_final[5],
+            fill_color = papoula,
+            fill_opacity = 0.7,
+            color = papoula    
+        )
+        legenda_poligono = TexMobject('{a}^2')
+        legenda_poligono.move_to(retangulo_final.get_center())
 
         legenda_x = TexMobject("(a+b)")
         legenda_x.next_to(retangulo_final, DOWN)
@@ -386,12 +381,6 @@ class Intermediario_produto(Scene):
         self.play(
             ShowCreation(titulo),
         )
-        self.wait(0.7)
-
-        # Quadrado total
-        self.play(
-            ShowCreation(quadrado_total),
-        )
         self.wait(1)
 
         # Criando a
@@ -399,7 +388,7 @@ class Intermediario_produto(Scene):
             ShowCreation(linha_a_x),
             Write(legenda_a_x),
         )
-        self.wait(0.7)
+        self.wait(1)
 
         self.play(
             ShowCreation(quadrado_a),
@@ -416,77 +405,129 @@ class Intermediario_produto(Scene):
             Write(legenda_b_x),
         )
         self.wait(0.7)
-
         self.play(
             ShowCreation(linha_diferenca_b),
             Write(legenda_b_y),
         )
+        self.wait(1.5)
+
 
         # Colocando so produtos de ab
         self.play(
             ReplacementTransform(legenda_a_y.copy(), equacao[6]),
         )
-        self.wait(0.3)
+        self.wait(0.7)
         self.play(
             ReplacementTransform(legenda_b_x.copy(), equacao[7]),
             ShowCreation(retangulo_soma_b),
-            FadeOut(linha_diferenca_b),
         )
+        self.wait(1)
 
         self.play(
             ReplacementTransform(legenda_a_x.copy(), equacao[4]),
         )
-        self.wait(0.3)
+        self.wait(0.7)
         self.play(
             ReplacementTransform(legenda_b_y.copy(), equacao[5]),
             ShowCreation(retangulo_diferenca_b),    
-            FadeOut(linha_soma_b),
         )
-        self.wait(0.7)
+        self.wait(1.5)
 
+        # Colocando ab no centro
         self.play(
-            FadeIn(quadrado_b),
-            Write(legenda_b),
+            FadeOut(quadrado_a),
+            FadeOut(legenda_a),
+            FadeOut(linha_diferenca_b),
+            legenda_a_x.next_to, retangulo_diferenca_b, UP,
+            legenda_a_y.next_to, retangulo_soma_b, RIGHT,
         )
         self.wait(0.7)
-        
-        # Preparando para o final
+        # Aplicando a rotação
         self.play(
-            FadeIn(soma_ab),
-            FadeIn(diferenca_ab),
-            FadeOut(legenda_a_y),
             FadeOut(legenda_a_x),
             FadeOut(legenda_b_y),
-            FadeOut(legenda_b_x),
-            FadeOut(retangulo_soma_b),
-            FadeOut(retangulo_diferenca_b),
+            retangulo_diferenca_b.move_to, reflexo_soma_b,
         )
-        self.wait(0.7)
+        # self.wait(0.1)
 
         self.play(
-            ShowCreation(retangulo_final),
+            Rotating(
+                retangulo_diferenca_b,
+                radians = PI/2,
+                about_point = retangulo_diferenca_b.get_center(),
+                rate_func = smooth,
+                run_time = 1,
+            ),
+        )
+        # self.wait(0.1)
+
+        legenda_a_x.next_to(retangulo_diferenca_b, LEFT)
+        legenda_b_y.next_to(retangulo_diferenca_b, DOWN)
+        self.play(
+            FadeIn(legenda_b_y),
+            FadeIn(legenda_a_x),
+            Write(igualdade),
+        )
+        self.wait(1)
+
+        self.play(
+            ReplacementTransform(retangulo_diferenca_b,retangulo_soma_b),
+            FadeOut(legenda_b_y),
+            FadeOut(legenda_a_x),
+            FadeOut(igualdade),
+        )
+        # Apenas posiciona para uma melhor animação
+        legenda_b_y.next_to(quadrado_b, LEFT)
+        self.wait(1.5)
+
+
+        # Exibindo poligono final
+        self.play(
+            ShowCreation(poligono_final),
+            Write(legenda_poligono),
             Write(legenda_x),
             Write(legenda_y),
-            ReplacementTransform(legenda_a, legenda_retangulo_final),            
-            FadeOut(quadrado_a),
-            FadeOut(soma_ab),
-            FadeOut(diferenca_ab),
+            FadeOut(legenda_a_y),
+            FadeOut(legenda_b_x),
+            FadeOut(retangulo_soma_b),
         )
-        self.wait(0.7)
+        self.wait(1.5)
+
+
+        self.play(
+            ShowCreation(quadrado_b),
+            legenda_b_x.next_to, quadrado_b, UP,
+            legenda_b_y.next_to, quadrado_b, RIGHT,
+            Write(legenda_b),
+        )
+        self.wait(1.5)
+
+
+        # Exibindo retangulo final
+        self.play(
+            FadeIn(retangulo_final),
+            FadeOut(poligono_final),
+            FadeOut(legenda_poligono),
+            Write(legenda_retangulo_final),                        
+        )
+        self.wait(1)
 
         self.play(
             ReplacementTransform(legenda_retangulo_final, equacao[3]),
             ReplacementTransform(legenda_b, equacao[8]),
             FadeOut(quadrado_b),
+            FadeOut(legenda_b_x),
+            FadeOut(legenda_b_y),
         )
-        self.wait(0.3)
+        self.wait(0.7)
         self.play(
             ReplacementTransform(legenda_x.copy(), equacao[0]),
             ReplacementTransform(legenda_y.copy(), equacao[1]),            
             Write(equacao[2]),            
         )
-        self.wait(0.7)
+        self.wait(1.5)
 
+        # Simplifica a equação
         self.play(
             ReplacementTransform(equacao,equacao_final)
         )
