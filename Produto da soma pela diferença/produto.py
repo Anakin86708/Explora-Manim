@@ -555,11 +555,11 @@ class Fechamento(Scene):
       autor.set_color("#dc6a40")
       autor.shift(0.3*DOWN)
 
-      ft = ImageMobject("logo-FT.jpeg")
+      ft = ImageMobject("../logo-FT.jpeg")
       ft.scale(1.5)
       ft.shift(2.3*DOWN+3*RIGHT)
 
-      unicamp = ImageMobject("logo-unicamp.jpeg")
+      unicamp = ImageMobject("../logo-unicamp.jpeg")
       unicamp.scale(1.5)
       unicamp.shift(2.3*DOWN+3*LEFT)
       
