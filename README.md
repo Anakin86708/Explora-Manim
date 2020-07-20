@@ -1,4 +1,5 @@
 # Explora-Manim
+![GitHub](https://img.shields.io/github/license/Anakin86708/Explora-Manim) ![GitHub repo size](https://img.shields.io/github/repo-size/Anakin86708/Explora-Manim) ![GitHub contributors](https://img.shields.io/github/contributors/Anakin86708/Explora-Manim)
 
 Animações criadas para o projeto [Explora](https://wordpress.ft.unicamp.br/explora/) da Faculdade de Tecnologia. 
 
