@@ -66,17 +66,29 @@ class Trace(Scene):
         separador = Line(np.array([0, 3, 0]), np.array([0, -3.5, 0]), color = apatita)
 
         base_dados = [
-            TexMobject('pais(eva, bob).'),
-            TexMobject('pais(tom, bob).'),            
-            TexMobject('pais(tom, liz).'),            
-            TexMobject('pais(bob, ana).'),            
-            TexMobject('pais(bob, bia).'),            
-            TexMobject('pais(bia, leo).'),    
-            TexMobject(
+            TexMobject('pais(eva, bob).'),      #0
+            TexMobject('pais(tom, bob).'),      #1 
+            TexMobject('pais(tom, liz).'),      #2    
+            TexMobject(                         #3
+                'pais(bob,',
+                'ana',
+                ').',
+            ),   
+            TexMobject(                         #4
+                'pais(bob,',
+                'bia',
+                ').',
+            ),
+            TexMobject(                         #5
+                'pais(bia,',
+                'leo',
+                ').',
+            ),
+            TexMobject(                         #6
                 'ancestral(X,Z):-',
                 'pais(X,Z).',
-            ),
-            TexMobject(
+            ), 
+            TexMobject(                         #7
                 'ancestral(X,Z):-',
                 'pais(X,Y), ',
                 ' ancestral(Y,Z).'
@@ -107,7 +119,11 @@ class Trace(Scene):
         # Linha query
         query = TexMobject(
             '?- ',
-            'ancestral(bob, leo).'
+            'ancestral(',
+            'bob',
+            ',',
+            'leo',
+            ').',
         )
         query.next_to(base_dados[-1], 4 * DOWN)
         query.to_corner(LEFT)
@@ -118,7 +134,7 @@ class Trace(Scene):
             '\\textbf{Regra da busca:}\\\\ \\text{Percorrer as cláusulas de cima para baixo}'
         )
         regra_computacao = TexMobject(
-            '\\textbf{Regra de computação:}\\\\ \\text{Escolher o literal mais a esquerda da } \\\\ \\text{cláusula objetivo}'
+            '\\textbf{Regra de computação:}\\\\ \\text{Escolher o literal mais a esquerda da} \\\\ \\text{ cláusula objetivo}'
         )
         regras = VGroup(regra_busca, regra_computacao)
         regras.scale(0.6)
@@ -129,12 +145,48 @@ class Trace(Scene):
         seta = ArrowTip(start_angle = 0).scale(0.6)
 
         objetivos = [
-            TexMobject('pais(bob,leo)'),
-            # TexMobject(''),
+            TexMobject('pais(bob,leo)'),    #0
+            TexMobject(                     #1
+                'pais(bob,',
+                'Y',
+                ')',
+            ),
+            TexMobject(                     #2
+                'pais(bob,',
+                'ana',
+                ')',
+            ),
+            TexMobject(                     #3
+                'ancestral(ana,leo)',
+            ),
+            TexMobject(                     #4
+                'pais(bob,',
+                'bia',
+                ')',
+            ),
+            TexMobject(                     #5
+                'ancestral(bia,leo)'
+            ),
+            TexMobject(                     #6
+                'pais(ana,leo)' 
+            ),
+            TexMobject(                     #7
+                'pais(bia,leo)'
+            ),
+            TexMobject(                     #8
+                'pais(ana,Y)'
+            )
         ]
         objetivos = list(map(lambda x: self.format_objetivo(x), objetivos))
 
-        retangulo_inicial = query[1].copy()
+        retangulo_inicial = TexMobject(
+            'ancestral(',
+            'bob',
+            ',',
+            'leo',
+            ')',
+        )
+        retangulo_inicial.scale(0.6)
         retangulo_inicial.add(
             SurroundingRectangle(
                 retangulo_inicial, 
@@ -142,13 +194,29 @@ class Trace(Scene):
                 opacity = 0.7
                 )
             )
+        # Posicionamento dos retângulos
         retangulo_inicial.move_to(np.array(ponto_central))
+        nivel_um = VGroup(objetivos[1], objetivos[2], objetivos[4])
+        nivel_dois = VGroup(objetivos[3], objetivos[5])
+        nivel_tres = VGroup(objetivos[6], objetivos[7], objetivos[8])
 
         objetivos[0].next_to(retangulo_inicial, 5 * DOWN)
         objetivos[0].shift(1.5 * RIGHT)
 
+        nivel_um.next_to(retangulo_inicial, 5 * DOWN)
+        nivel_um.shift(1.5 * LEFT)
+
+        nivel_dois.next_to(objetivos[2], 5 * DOWN)    
+
+        nivel_tres.next_to(objetivos[3], 5 * DOWN)
+
         # Setas
-        seta_pais_inicial = Arrow(start = objetivos[0].get_top(), end = retangulo_inicial.get_bottom(), color = starship)
+        setas = [
+            Arrow(start = objetivos[0].get_top(), end = retangulo_inicial.get_bottom(), color = starship),
+            Arrow(start = objetivos[1].get_top(), end = retangulo_inicial.get_bottom(), color = starship),
+            Arrow(start = objetivos[3].get_top(), end = objetivos[1].get_bottom(), color = starship),
+            Arrow(start = objetivos[6].get_top(), end = objetivos[3].get_bottom(), color = starship),
+        ]
 
         # Valores
         falso = TexMobject('\\text{Falso}', color = papoula)
@@ -174,7 +242,7 @@ class Trace(Scene):
 
         # Escrevendo query
         self.play(
-            Write(query[1]),
+            Write(query[1:]),
             ShowCreation(seta.next_to(query, LEFT)),
         )
         self.wait(1.5)
@@ -211,6 +279,8 @@ class Trace(Scene):
         self.wait(1)
         self.play(
             FadeIn(retangulo_inicial),
+            ReplacementTransform(query[2].copy(), retangulo_inicial[1]),
+            ReplacementTransform(query[4].copy(), retangulo_inicial[3]),
         )
         self.wait(1.5)
 
@@ -224,7 +294,7 @@ class Trace(Scene):
         )
         self.wait(1)
         self.play(
-            ShowCreation(seta_pais_inicial),
+            ShowCreation(setas[0]),
         )
         self.wait(1.5)
 
@@ -246,18 +316,312 @@ class Trace(Scene):
         self.play(
             Write(falso),
         )
-            
+        self.wait(3)
 
+        self.play(
+            FadeOutAndShift(seta_secundaria, LEFT),
+            FadeOutAndShiftDown(falso),
+        )
+        self.wait(1.5)
 
-
-        
-
-        # self.wait(5)
-        # for x in range(-7, 8):
-        #     for y in range(-4, 5):
-        #         self.add((Dot(np.array([x, y, 0]), color = DARK_GREY if x != 0 and y != 0 else YELLOW)))
+        # Continua com a execução principal
+        self.play(
+            seta.next_to, base_dados[6], LEFT,
+        )
+        seta.set_color(papoula)
         self.wait(1)
+        self.play(
+            seta.next_to, base_dados[7], LEFT ,
+        )
+        seta.set_color(apatita)
+        self.wait(1)
+        self.play(
+            Indicate(retangulo_inicial),
+        )
+        self.wait(1.5)
 
+        # Colocar lado esquerdo do trace
+        self.play(
+            seta.next_to, base_dados[7][1], LEFT,
+        )
+        self.wait(1.5)
+        
+        self.play(
+            FadeIn(objetivos[1]),
+        )
+        self.wait(1)
+        self.play(
+            ShowCreation(setas[1]),
+        )
+        self.wait(1.5)
+
+        # Resolvendo pais Y
+        seta_secundaria.set_color(papoula)
+        seta_secundaria.next_to(base_dados[0], LEFT)
+        self.play(
+            GrowFromEdge(seta_secundaria, LEFT),
+        )
+        for i in range(3):
+            self.wait(0.5)
+            self.play(
+                seta_secundaria.next_to, base_dados[i+1], LEFT,
+            )
+        seta_secundaria.set_color(apatita)
+        self.wait(1.5)
+
+        # Encontra ana
+        self.play(
+            FadeIn(objetivos[2]),
+            FadeOut(objetivos[1]),
+            ReplacementTransform(base_dados[3][1].copy(), objetivos[2][1]),
+        )
+        self.wait(3)
+
+        # Coloca Y em ancestral ana, leo
+        self.play(
+            seta.next_to, base_dados[7][2], LEFT,
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(objetivos[3]),
+        )
+        self.wait(1)
+        self.play(
+            ShowCreation(setas[2]),
+        )   
+
+        # Resolvendo ancestral ana, leo
+        seta_tres = seta_secundaria.copy()
+        seta_tres.set_color(papoula)
+        seta_tres.next_to(base_dados[0], LEFT)
+        self.play(
+            GrowFromEdge(seta_tres, LEFT)
+        )
+        for i in range(6):
+            self.wait(0.5)
+            self.play(
+                seta_tres.next_to, base_dados[i+1], LEFT,
+            )
+        seta_tres.set_color(apatita)
+        self.wait(1)
+        # Resolvendo pais ana, leo
+        self.play(
+            seta_tres.next_to, base_dados[6][1], LEFT,
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(objetivos[6]),            
+        )
+        self.wait(1)
+        self.play(
+            ShowCreation(setas[3]),
+        )
+        self.wait(3)
+
+        # Procurando pais ana, leo
+        seta_quatro = seta_tres.copy()
+        seta_quatro.set_color(papoula)
+        seta_quatro.next_to(base_dados[0], LEFT)
+        self.play(
+            GrowFromEdge(seta_quatro, LEFT)
+        )
+        for i in range(7):
+            self.wait(0.5)
+            self.play(
+                seta_quatro.next_to, base_dados[i+1], LEFT,
+            )
+
+        self.wait(1)
+        falso.next_to(objetivos[6], DOWN)
+        self.play(
+            Write(falso),
+        )
+        self.wait(3)
+
+        ## ARRUMAR O FADE DO FALSO E COLOCAR AGORA COM A BIA
+
+        # Falso para ana
+        self.play(
+            FadeOutAndShift(seta_quatro, LEFT),
+            FadeOutAndShiftDown(falso),
+        )
+        self.wait(1)
+        self.play(
+            FadeOut(objetivos[6]),
+            FadeOut(setas[3]),
+        )
+        self.wait(1.5)
+
+        # Retorna a seta para proximo ancestral
+        seta_tres.set_color(papoula)
+        self.play(
+            seta_tres.next_to, base_dados[6], LEFT,
+        )
+        self.wait(1)
+        self.play(
+            seta_tres.next_to, base_dados[7], LEFT,
+        )
+        seta_tres.set_color(apatita)
+        self.wait(1.5)
+
+        # Seta em pais ana, Y
+        self.play(
+            seta_tres.next_to, base_dados[7][1], LEFT,
+        )
+        self.wait(1.5)
+
+        self.play(
+            FadeIn(objetivos[8]),
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(setas[3]),
+        )
+        
+        # Resolver pais ana, Y
+        seta_quatro.next_to(base_dados[0], LEFT)
+        seta_quatro.set_color(papoula)
+        self.play(
+            GrowFromEdge(seta_quatro, LEFT)
+        )
+        for i in range(7):
+            self.wait(0.5)
+            self.play(
+                seta_quatro.next_to, base_dados[i+1], LEFT,
+            )
+
+        self.wait(1)
+        falso.next_to(objetivos[6], DOWN)
+        self.play(
+            Write(falso),
+        )
+        self.wait(3)
+
+        self.play(
+            FadeOutAndShiftDown(falso),
+            FadeOutAndShift(seta_quatro, LEFT),
+        )
+
+        # Remover pais ana, Y
+        self.wait(1)
+        self.play(
+            FadeOut(objetivos[8]),
+            FadeOut(setas[3]),
+            seta_tres.next_to, base_dados[7], LEFT,
+        )
+        self.wait(1)
+        #Remover ancestral ana, leo
+        self.play(
+            FadeOutAndShift(seta_tres, LEFT),
+            FadeOut(objetivos[3]),
+            FadeOut(setas[2]),
+        )
+        self.wait(1.5)
+
+        # Retorna seta para pais
+        self.play(
+            seta.next_to, base_dados[7][1], LEFT,
+        )
+        self.wait(1.5)
+
+        # Avançar para pais bob, bia
+        seta_secundaria.set_color(papoula)
+        self.play(
+            seta_secundaria.next_to, base_dados[4], LEFT,
+        )
+        seta_secundaria.set_color(apatita)
+        self.wait(1.5)
+
+        # Subistituir pais bob, bia
+        self.play(
+            FadeOut(objetivos[2]),
+            ReplacementTransform(base_dados[4].copy(), objetivos[4]),
+        )
+        self.wait(1.5)
+
+        # Avança para ancestral
+        self.play(
+            seta.next_to, base_dados[7][2], LEFT,
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(objetivos[5]),
+        )
+        self.wait(1)
+        self.play(
+            ShowCreation(setas[2]),
+        )
+
+        # Resolvendo ancestral bia, leo
+        seta_tres.next_to(base_dados[0], LEFT)
+        seta_tres.set_color(papoula)
+        self.play(
+            GrowFromEdge(seta_tres, LEFT)
+        )
+        for i in range(6):
+            self.wait(0.5)
+            self.play(
+                seta_tres.next_to, base_dados[i+1], LEFT,
+            )
+        seta_tres.set_color(apatita)
+        self.wait(1.5)
+
+        self.play(
+            seta_tres.next_to, base_dados[6][1], LEFT,
+        )
+        self.wait(1.5)
+        
+        # Exibe retângulo pais bia, leo
+        self.play(
+            FadeIn(objetivos[7]),
+        )
+        self.wait(1)
+        self.play(
+            FadeIn(setas[3]),
+        )
+        self.wait(1.5)
+
+        # Procurando pais bia, leo
+        seta_quatro.next_to(base_dados[0], LEFT)
+        seta_quatro.set_color(papoula)
+        self.play(
+            GrowFromEdge(seta_quatro, LEFT)
+        )
+        for i in range(5):
+            self.wait(0.5)
+            self.play(
+                seta_quatro.next_to, base_dados[i+1], LEFT,
+            )
+        self.wait(1.5)
+
+        seta_quatro.set_color(apatita)
+        self.wait(1.5)
+        verdade.next_to(objetivos[7], DOWN)
+        self.play(
+            FadeIn(verdade),
+        )
+        self.wait(10)
+
+        # Removendo objetos da scene
+        self.play(          
+            *[FadeOutAndShift(item, LEFT) for item in base_dados],
+            FadeOutAndShift(query, LEFT),
+            FadeOutAndShift(seta_quatro, LEFT),
+            FadeOutAndShift(seta_tres, LEFT),
+            FadeOutAndShift(seta_secundaria, LEFT),
+            FadeOutAndShift(seta, LEFT),
+
+            Uncreate(retangulo_inicial),
+            Uncreate(objetivos[0]),
+            Uncreate(objetivos[4]),
+            Uncreate(objetivos[5]),
+            Uncreate(objetivos[7]),
+            Uncreate(verdade),
+            *[Uncreate(item) for item in setas],
+            Uncreate(separador),
+            Uncreate(titulo),
+        )
+        self.wait(1)
 
 
 #############################################
