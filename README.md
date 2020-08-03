@@ -9,3 +9,6 @@ Animação para o caso de ![equation](http://www.sciweavers.org/tex2img.php?eq=%
 
 ## Equivalência lógica
 Animações com o propósito de melhor ilustrar as equivalências lógicas estudadas na disciplina de Lógica Matemática
+
+## Prolog
+Exemplo da execução do prolog
