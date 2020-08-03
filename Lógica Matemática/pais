@@ -1,0 +1,8 @@
+pais(eva, bob). 
+pais(tom, bob). 
+pais(tom, liz). 
+pais(bob, ana). 
+pais(bob, bia). 
+pais(bia, leo).
+ancestral(X,Z):-pais(X,Z).
+ancestral(X,Z):-pais(X,Y),ancestral(Y,Z).
