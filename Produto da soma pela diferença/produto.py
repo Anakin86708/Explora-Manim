@@ -55,10 +55,11 @@ class Intermediario_soma(Scene):
     def construct(self):
         # Exibindo título e movendo para o topo
         titulo = TexMobject("\\text{Produtos notáveis}")
-        titulo.set_color("#dc6a40")
-        titulo_top = titulo.copy()
+        titulo.set_color(papoula)
+        titulo_top = TexMobject("\\text{Quadrado da soma}")
 
         titulo.scale(3.5)
+        titulo_top.set_color(papoula)
         titulo_top.scale(1)
         titulo_top.to_edge(UP)
 
@@ -90,12 +91,12 @@ class Intermediario_soma(Scene):
             ShowCreation(reta_a_x),
             Write(legenda_a_x)
         )
-        self.wait(0.5)
+        self.wait(1)
         self.play(
             ShowCreation(reta_a_y),
             Write(legenda_a_y)
         )
-        self.wait(0.7)
+        self.wait(1.5)
 
         quadrado_a = Polygon(
             pontos_a[0],
@@ -113,10 +114,10 @@ class Intermediario_soma(Scene):
             FadeOut(reta_a_x),
             FadeOut(reta_a_y),
         )        
-        self.wait(1)
+        self.wait(3)
 
         # Criando quadrado b
-        diferenca = 2
+        diferenca = 1.5
         pontos_b = [
             pontos_a[2],
             pontos_a[2] + diferenca * RIGHT,
@@ -138,12 +139,12 @@ class Intermediario_soma(Scene):
             ShowCreation(reta_b_x),
             Write(legenda_b_x)
         )
-        self.wait(0.5)
+        self.wait(1)
         self.play(
             ShowCreation(reta_b_y),
             Write(legenda_b_y)
         )
-        self.wait(0.7)
+        self.wait(1.5)
 
         quadrado_b = Polygon(
             pontos_b[0],
@@ -161,8 +162,10 @@ class Intermediario_soma(Scene):
             ShowCreation(legenda_b),
             FadeOut(reta_b_x),
             FadeOut(reta_b_y),
+            legenda_b_x.next_to, quadrado_b, UP,
+            legenda_b_y.next_to, quadrado_b, RIGHT,
         )  
-        self.wait(0.7)
+        self.wait(3)
 
         # Criando retangulos laterais
         retangulo_d = Polygon(
@@ -184,10 +187,88 @@ class Intermediario_soma(Scene):
             fill_opacity=0.7,
             color='#F2E33A'
         )
+        
+        # Legendas para os retângulos
+        legenda_t_x = legenda_a_x.copy()
+        legenda_t_y = legenda_b_y.copy()
+
+        legenda_d_x = legenda_b_x.copy()
+        legenda_d_y = legenda_a_y.copy()
 
         self.play(
             ShowCreation(retangulo_d),
-            ShowCreation(retangulo_t)
+            ShowCreation(retangulo_t),
+            legenda_t_x.next_to, retangulo_t, UP,
+            legenda_t_y.next_to, retangulo_t, LEFT,
+            legenda_d_x.next_to, retangulo_d, DOWN,
+            legenda_d_y.next_to, retangulo_d, RIGHT,
+        )
+        self.wait(1)
+
+        # Legendas no interior dos retângulos
+        legenda_t = TexMobject("ab")
+        legenda_t.move_to(retangulo_t.get_center())
+        legenda_d = legenda_t.copy()
+        legenda_d.move_to(retangulo_d.get_center())
+
+        self.play(
+            ShowCreation(legenda_t),
+            ShowCreation(legenda_d),
+        )
+        self.wait(3)
+
+        # Monta a equação
+        equacao = TexMobject(
+            "{(a+b)}^2",    # 0
+            "=",            # 1
+            "{a}^{2}",      # 2
+            "+2ab",          # 3
+            "+{b}^{2}"       # 4
+        )
+        equacao.to_edge(UP)
+
+        self.play(
+            FadeOutAndShift(titulo, UP),
+            Write(equacao[0]),
+            FadeOut(legenda_a_x),
+            FadeOut(legenda_a_y),
+            FadeOut(legenda_b_x),
+            FadeOut(legenda_b_y),
+            FadeOut(legenda_t_x),
+            FadeOut(legenda_t_y),
+            FadeOut(legenda_d_x),
+            FadeOut(legenda_d_y),
+        )
+        self.wait(1)
+        self.play(
+            ReplacementTransform(legenda_a, equacao[2]),
+        )
+        self.wait(1)
+        ab = VGroup(
+            legenda_t,
+            legenda_d,
+        )
+        self.play(
+            ReplacementTransform(ab, equacao[3]),
+        )
+        self.wait(1)
+        self.play(
+            ReplacementTransform(legenda_b, equacao[4]),
+        )
+        self.wait(1.5)
+
+        self.play(
+            Write(equacao[1])
+        )
+        self.wait(5)
+
+        # Limpando a Scene
+        self.play(
+            FadeOutAndShift(equacao, UP),
+            FadeOut(quadrado_a),
+            FadeOut(quadrado_b),
+            FadeOut(retangulo_d),
+            FadeOut(retangulo_t),
         )
         self.wait(1)
 
@@ -555,11 +636,11 @@ class Fechamento(Scene):
       autor.set_color("#dc6a40")
       autor.shift(0.3*DOWN)
 
-      ft = ImageMobject("../logo-FT.jpeg")
+      ft = ImageMobject("./logo-FT.jpeg")
       ft.scale(1.5)
       ft.shift(2.3*DOWN+3*RIGHT)
 
-      unicamp = ImageMobject("../logo-unicamp.jpeg")
+      unicamp = ImageMobject("./logo-unicamp.jpeg")
       unicamp.scale(1.5)
       unicamp.shift(2.3*DOWN+3*LEFT)
       
