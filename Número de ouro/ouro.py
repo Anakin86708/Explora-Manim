@@ -29,7 +29,7 @@ class Abertura(Scene):
         explora.scale(4.5)
         explora.set_color("#43bfca")
 
-        titulo = TexMobject("\\text{Produtos notáveis}")
+        titulo = TexMobject("\\text{Número de ouro}")
         titulo.scale(3.5)
         titulo.set_color("#dc6a40")
 
@@ -84,9 +84,10 @@ class Algebra(Scene):
 
         # Animações
 
-        self.play(
-            FadeIn(titulo),
-        )
+        # self.play(
+        #     FadeIn(titulo),
+        # )
+        self.add(titulo)
         self.wait(2)
 
         self.play(
@@ -204,7 +205,7 @@ class Algebra(Scene):
         self.wait(1)
 
 class Geometria(Scene):   
-    def desenhar_fibonacci(self, n, wait_time = 0, multiplicador = 1, color = "#43bfca") -> VGroup:
+    def desenhar_fibonacci(self, n, wait_time=0, multiplicador=1, color="#43bfca", align=ORIGIN) -> VGroup:
         try:
             if n < 1:
                 raise ValueError
@@ -233,7 +234,7 @@ class Geometria(Scene):
                     quadrados[-1].next_to(quadrados[:i], lados[i%4], buff=0)
 
             # Deixa a figura centralizada na tela e exibe animação
-            quadrados.move_to(ORIGIN)
+            quadrados.move_to(align)
             quadrados.set_color(color)
             for i in range(n):
                 self.play(
@@ -279,35 +280,61 @@ class Geometria(Scene):
 
         # Animações
         self.play(
-            FadeIn(titulo),
+            FadeIn(titulo_top),
         )
-        self.wait(2)
+        # self.wait(2)
 
-        self.play(
-            ReplacementTransform(titulo, titulo_top),
-        )
+        # self.play(
+        #     ReplacementTransform(titulo, titulo_top),
+        # )
         self.wait(1.5)
 
         # Desenhando os quadrados e os arcos
-        quadrados = self.desenhar_fibonacci(8, multiplicador=.25)
-        self.desenhar_arcos(quadrados)
+        multiplicador = .25
+        quadrados = self.desenhar_fibonacci(8, multiplicador=multiplicador)
+        arcos = self.desenhar_arcos(quadrados)
         self.wait(3)
 
         # Exibindo tamanho
         x = Brace(quadrados, DOWN)
         y = Brace(quadrados, LEFT)
+        val_x = quadrados[-2].get_width() / multiplicador + quadrados[-1].get_width() / multiplicador
+        val_y = quadrados[-1].get_width() / multiplicador
+        leg_x = TexMobject(f'{val_x}')
+        leg_y = TexMobject(f'{val_y}')
+        leg_x.next_to(x, DOWN)
+        leg_y.next_to(y,LEFT)
         self.play(
             FadeIn(y),
+            Write(leg_y),
             FadeIn(x),
+            Write(leg_x),
         )
+        self.wait(5)
         
 
         # Exibe o valor
-        # formula - TexMobject(
-        #     '\\phi = ',
-        # )
+        formula_str = '\\phi = {{ {} \\over {} }} = {}'.format(val_x, val_y, val_x/val_y)
+        formula = TexMobject(
+            formula_str
+        )
+
+        legendas = VGroup(leg_x,leg_y)
+        self.play(
+            FadeOut(quadrados),
+            FadeOut(x),
+            FadeOut(y),
+            ReplacementTransform(legendas, formula)
+        )
 
         self.wait(5) 
+
+        # Limpando Scene
+        self.play(
+            FadeOut(formula),
+            FadeOut(arcos),
+            FadeOutAndShift(titulo_top, UP),
+        )
 
 
 
