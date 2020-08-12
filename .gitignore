@@ -1,0 +1,8 @@
+.vscode/
+__pycache__
+manim.py
+media/
+Outros/
+render.sh
+workstation.code-workspace
+*nohup.out
