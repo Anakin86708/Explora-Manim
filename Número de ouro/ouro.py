@@ -29,7 +29,7 @@ class Abertura(Scene):
         explora.scale(4.5)
         explora.set_color("#43bfca")
 
-        titulo = TexMobject("\\text{Número de ouro}")
+        titulo = TexMobject("\\text{Número de ouro:}\\\\ \\text{razão áurea}")
         titulo.scale(3.5)
         titulo.set_color("#dc6a40")
 
@@ -44,7 +44,7 @@ class Abertura(Scene):
 class Algebra(Scene):      
     def construct(self):
         # Exibindo título e movendo para o topo
-        titulo = TexMobject("\\text{Número de ouro}")
+        titulo = TexMobject("\\text{Número de ouro:}\\\\ \\text{razão áurea}")
         titulo.set_color(papoula)
         titulo_top = TexMobject("\\text{Abordagem algébrica}")
 
@@ -58,57 +58,129 @@ class Algebra(Scene):
             "\\text{Dois valores positivos estão em razão áurea se sua }\\\\ \
                 \\text{razão é igual à razão da sua soma pela maior das quantidades}"
         )
+
+        # Condições
+        condicao = TexMobject(
+            "\\text{Considere dois valores } a \\text{ e } b \\text{, onde } a > 0 \\text{ e } b > 0"
+        )
         # Equação inicial
         eq_inicial = TexMobject(
-            '{{a+b}',       # 0
+            '{{a}',         # 0
             '\\over',       # 1
-            '{a}}',         # 2   
+            '{b}}',         # 2
             ' = ',          # 3
-            '{{a}',         # 4
-            '\\over',       # 5
-            '{b}}',         # 6
-            ' = ',          # 7
-            '\\phi',        # 8
+            '{{a',          # 4   
+            '+',            # 5
+            'b}',           # 6
+            '\\over',       # 7
+            '{a}}',         # 8
+            ' = ',          # 9
+            '\\phi',        # 10
         )
 
-        eq_passos = [
-            TexMobject('a = b\\phi'),
-            TexMobject('b\\phi + b'),
-            TexMobject('b\\phi'),
-            TexMobject('\\phi + 1'),
-            TexMobject('\\phi'),
-            TexMobject('\\phi + 1 = {\\phi}^2'),
-            TexMobject('{\\phi}^2 - \\phi - 1 = 0'),
-        ]
+        eq_superior = TexMobject(
+            '{{a}',         # 0
+            '\\over',       # 1
+            '{b}}',         # 2
+            ' = ',          # 3
+            '\\phi'         # 4
+        )
+
+        eq_inferior = TexMobject(
+            '{{a}',         # 0
+            '\\over',       # 1
+            '{b}}',         # 2
+            ' = ',          # 3
+            '{{a',          # 4   
+            '+',            # 5
+            'b}',           # 6
+            '\\over',       # 7
+            '{a}}',         # 8
+        )
+
+        eq_passos = {
+            1.0:TexMobject(
+                'a ',
+                '=',
+                'b',
+                '\\phi',
+            ),
+            1.1:TexMobject(
+                'b\\phi',
+                ' + b',
+            ),
+            2.0:TexMobject(
+                '{{b',          # 0
+                '\\phi}'        # 1
+                '\\over',       # 2
+                '{b}}',         # 3
+                ' = ',          # 4
+                '{{b',          # 5
+                '\\phi}'        # 6   
+                '+',            # 7
+                'b',            # 8
+                '\\over',       # 9
+                '{b',           # 10
+                '\\phi}}'       # 11
+            ),
+            3.0:TexMobject(
+                'b',
+                '(\\phi + 1)',
+            ),
+            4.0:TexMobject(
+                '\\phi + 1',
+            ),
+            4.1:TexMobject(
+                '\\phi',
+            ),
+            5.0:TexMobject(
+                '{\\phi}^2',
+                '= ',
+                '\\phi',
+                ' + ',
+                '1 ',
+            ),
+            6.0:TexMobject(
+                '{\\phi}^2',
+                ' - \\phi ',
+                '- 1',
+                '= 0',
+            ),
+        }
 
 
         # Animações
-
-        # self.play(
-        #     FadeIn(titulo),
-        # )
         self.add(titulo)
-        self.wait(2)
+        self.wait(1)
 
         self.play(
-            ReplacementTransform(titulo, titulo_top),
+            Transform(titulo, titulo_top),
         )
         self.wait(1.5)
+
+        # Coloca condição
+        condicao.next_to(eq_inicial, 1.5 * DOWN)
+        self.play(
+            Write(condicao),
+        )
+        self.wait(7)
+
 
         # Escreve eq inicial
         historico = VGroup()
         self.play(
+            FadeOutAndShiftDown(condicao),
             Write(eq_inicial),
         )
         historico.add(eq_inicial)
-        self.wait(1.5)
+        self.wait(2)
 
         # Coloca texto
-        texto_inicial.next_to(eq_inicial, DOWN)
+        texto_inicial.next_to(eq_inicial, 1.5 * DOWN)
         self.play(
             Write(texto_inicial),
         )
-        self.wait(10)
+        self.wait(10)        
         self.play(
             FadeOutAndShiftDown(texto_inicial),
         )
@@ -119,59 +191,83 @@ class Algebra(Scene):
             eq_inicial.shift, UP
         )
         self.wait(1)
-        eq_superior = eq_inicial[4:].copy()
-        eq_superior.next_to(eq_inicial, DOWN)
-
 
         # Mostra a/b = phi
+        grupo = VGroup(eq_inicial[:4],eq_inicial[10])
+        eq_superior.next_to(eq_inicial, DOWN)
         self.play(
-            ReplacementTransform(eq_inicial[4:].copy(), eq_superior)
+            ReplacementTransform(grupo.copy(), eq_superior)
         )
-        self.wait(1.5)
+        self.wait(2)
         historico.add(eq_superior)
 
-        eq_inferior = eq_inicial[:7].copy()
+        # Mostra a/b = (a+b)/a
+        grupo = VGroup(eq_inicial[:9])
+        eq_inferior.next_to(eq_superior, DOWN)
         self.play(
-            eq_inferior.next_to, eq_superior, DOWN,
+            ReplacementTransform(grupo.copy(), eq_inferior)
         )
-        self.wait(1)
+        self.wait(2)
         historico.add(eq_inferior)
-
-        # Remove equação inicial
-        self.play(
-            historico.shift, UP,
-            # FadeOutAndShift(eq_inicial, UP),
-        )
-        self.wait(1)
 
 
         # Isolando a
+        eq_passos[1].move_to(eq_superior)
         self.play(
-            Transform(eq_superior,eq_passos[0].move_to(eq_superior)),
+            Transform(eq_superior[:2], eq_passos[1][0]),
+            Transform(eq_superior[2], eq_passos[1][2]),
+            Transform(eq_superior[3], eq_passos[1][1]),
+            Transform(eq_superior[4], eq_passos[1][3]),
         )
         self.wait(2)
 
         # Subitituindo a       
+        sub = [eq_passos[1][2:].copy(),eq_passos[1][2:].copy(),eq_passos[1][2:].copy()]
+        eq_passos[1.1].move_to(eq_inferior[4:7])
         self.play(
-            Transform(eq_inferior[0], eq_passos[1].move_to(eq_inferior[0])),
-            Transform(eq_inferior[2], eq_passos[2].move_to(eq_inferior[2]).copy()),
-            Transform(eq_inferior[4], eq_passos[2].move_to(eq_inferior[4]).copy()),
+            FadeOut(eq_inferior[0]),
+            FadeOut(eq_inferior[8]),
+            Transform(eq_inferior[4:7], eq_passos[1.1]),
+            sub[0].move_to, eq_inferior[0],
+            sub[1].move_to, eq_passos[1.1][0],
+            sub[2].move_to, eq_inferior[8],
+        )
+        self.wait(2)
+
+
+        # Colocando b em evidência
+        eq_passos[3].move_to(eq_inferior[4:7])
+        self.play(
+            FadeOut(sub[1]),
+            Transform(eq_inferior[4:7], eq_passos[3])
         )
         self.wait(2)
 
         # Cancelando b
         self.play(
-            Transform(eq_inferior[0], eq_passos[3].move_to(eq_inferior[0])),
-            Transform(eq_inferior[2], eq_passos[4].move_to(eq_inferior[2]).copy()),
-            Transform(eq_inferior[4:], eq_passos[4].move_to(eq_inferior[4]).copy()),
+            FadeOut(sub[0]),
+            FadeOut(sub[2]),
+            Transform(eq_inferior[0:3], eq_passos[4.1].move_to(eq_inferior[0:3]).copy()),
+            Transform(eq_inferior[4:7], eq_passos[4].move_to(eq_inferior[4:7])),
+            Transform(eq_inferior[8], eq_passos[4.1].move_to(eq_inferior[8]).copy()),
         )
         self.wait(3)
 
         # Multiplicando por phi
+        ## ALINHAMENTO NÃO ESTÁ CORRETO
         self.play(
-            Transform(eq_inferior, eq_passos[5].move_to(eq_inferior)),
+            eq_inferior[8].next_to, eq_inferior[0], LEFT,
+            Transform(eq_inferior[:8], eq_passos[5][1:].move_to(eq_inferior[:8])),
         )
+        self.wait(1.5)
+        grupo = VGroup(eq_inferior[6:], eq_inferior[0])
+        self.play(
+            Transform(eq_inferior[:7], eq_passos[5][1:].next_to(eq_inferior[0], RIGHT)),
+            Transform(grupo, eq_passos[5][0].move_to(eq_inferior[0])),
+        )
+        ## ALINHAMENTO NÃO ESTÁ CORRETO
         self.wait(3)
+        """
 
         # Muda termos
         self.play(
@@ -194,12 +290,12 @@ class Algebra(Scene):
             FadeToColor(eq_solucao[1], starship),
         )
         historico.add(eq_solucao)
-        
+        """
 
         self.wait(5)
         # Limpar Scene
         self.play(
-            FadeOutAndShift(titulo_top, UP),
+            FadeOutAndShift(titulo, UP),
             FadeOutAndShiftDown(historico),
         )
         self.wait(1)
