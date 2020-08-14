@@ -9,13 +9,13 @@
 # cores que estejam em harmonia com
 # as cores da sala:
 #
-# Apatita (verde)   : código Hex "#43bfca"
-# Papoula (laranja) : código Hex "#dc6a40"
+# APATITA (verde)   : código Hex "#43bfca"
+# PAPOULA (laranja) : código Hex "#dc6a40"
 
 from manimlib.imports import *
-apatita = "#43bfca"
-papoula = "#dc6a40"
-starship = "#F2E33A"
+APATITA = "#43bfca"
+PAPOULA = "#dc6a40"
+STARSHIP = "#F2E33A"
 
 
 ############################################
@@ -30,7 +30,7 @@ class Abertura(Scene):
         explora.set_color("#43bfca")
 
         titulo = TexMobject("\\text{Número de ouro:}\\\\ \\text{razão áurea}")
-        titulo.scale(3.5)
+        titulo.scale(2.5)
         titulo.set_color("#dc6a40")
 
         self.play(FadeIn(explora))
@@ -41,15 +41,30 @@ class Abertura(Scene):
 ############################################
 # Cena intermediárias
 ############################################
-class Algebra(Scene):      
+class Algebra(GraphScene):   
+    CONFIG = {
+        "x_min": -5,
+        "x_max": 5,
+        "y_min": -5,
+        "y_max": 5,
+        "y_axis_height": 5,
+        "x_axis_width": 5,
+        "graph_origin": ORIGIN,
+        "function_color": PAPOULA,
+        "axes_color": APATITA,
+    }   
+
+    def func_to_graph(self, x):
+        return x**2 - x - 1 
+
     def construct(self):
         # Exibindo título e movendo para o topo
         titulo = TexMobject("\\text{Número de ouro:}\\\\ \\text{razão áurea}")
-        titulo.set_color(papoula)
+        titulo.set_color(PAPOULA)
         titulo_top = TexMobject("\\text{Abordagem algébrica}")
 
-        titulo.scale(3.5)
-        titulo_top.set_color(papoula)
+        titulo.scale(2.5)
+        titulo_top.set_color(PAPOULA)
         titulo_top.scale(1)
         titulo_top.to_edge(UP)
 
@@ -241,7 +256,7 @@ class Algebra(Scene):
             FadeOut(sub[1]),
             Transform(eq_inferior[4:7], eq_passos[3])
         )
-        self.wait(2)
+        self.wait(3.5)
 
         # Cancelando b
         self.play(
@@ -254,54 +269,88 @@ class Algebra(Scene):
         self.wait(3)
 
         # Multiplicando por phi
-        ## ALINHAMENTO NÃO ESTÁ CORRETO
         self.play(
             eq_inferior[8].next_to, eq_inferior[0], LEFT,
-            Transform(eq_inferior[:8], eq_passos[5][1:].move_to(eq_inferior[:8])),
+            Transform(eq_inferior[1:8], eq_passos[5][1:].next_to(eq_inferior[0], RIGHT)),
         )
         self.wait(1.5)
-        grupo = VGroup(eq_inferior[6:], eq_inferior[0])
+        grupo = VGroup(eq_inferior[8], eq_inferior[0])
         self.play(
-            Transform(eq_inferior[:7], eq_passos[5][1:].next_to(eq_inferior[0], RIGHT)),
             Transform(grupo, eq_passos[5][0].move_to(eq_inferior[0])),
         )
-        ## ALINHAMENTO NÃO ESTÁ CORRETO
         self.wait(3)
-        """
 
         # Muda termos
+        eq_passos[6].move_to(eq_inferior)
         self.play(
-            Transform(eq_inferior, eq_passos[6].move_to(eq_inferior)),
+            FadeOut(eq_passos[5][4]),
+            Transform(eq_inferior[1], eq_passos[6][3]),
+            Transform(eq_inferior[2], eq_passos[6][1]),
+            Transform(eq_inferior[3:8], eq_passos[6][2]),
+            Transform(grupo, eq_passos[6][0]),
         )
         self.wait(3)
+
+
+        # Colocando gráfico da equação
+        self.play(
+            FadeOutAndShiftDown(historico[:-1]),
+            eq_inferior.shift, 1.3 * DOWN,
+        )
+        self.setup_axes(animate=True),
+
+        # Desenhando gráfico
+        func_graph = self.get_graph(
+            self.func_to_graph, 
+            self.function_color,
+            x_min=-2,
+            x_max=3,
+        )
+        self.play(
+            ShowCreation(func_graph),
+        )
+        self.wait(3)
+
+        # Determinando raizes
+        x = self.coords_to_point(1, self.func_to_graph(0))
+        y = self.coords_to_point(0, self.func_to_graph(0))
+        raiz_1 = Dot(self.coords_to_point((1-math.sqrt(5))/2, 0))
+        raiz_2 = Dot(self.coords_to_point((1+math.sqrt(5))/2, 0))
+        raiz_2.set_color(STARSHIP)
+        self.play(
+            ShowCreation(raiz_1),
+            ShowCreation(raiz_2),
+        )
 
         # Solucionar equação
         eq_solucao = TexMobject(
             '\\phi = {{1 + \\sqrt{5}} \\over {2}}',
             '\\approx 1,61803398875',
         )
-        eq_solucao.next_to(eq_inferior, DOWN)
+        eq_solucao.next_to(self.axes, DOWN)
         self.play(
-            Write(eq_solucao),
+            FadeOut(eq_inferior),
+            Write(eq_solucao[0]),
         )
         self.wait(1)
+        eq_solucao[1].set_color(STARSHIP)
         self.play(
-            # Write(eq_solucao[1]),
-            FadeToColor(eq_solucao[1], starship),
+            Write(eq_solucao[1]),
         )
         historico.add(eq_solucao)
-        """
 
         self.wait(5)
         # Limpar Scene
+        grupo = VGroup(self.axes, func_graph, raiz_1, raiz_2)
         self.play(
+            FadeOut(grupo),
             FadeOutAndShift(titulo, UP),
-            FadeOutAndShiftDown(historico),
+            FadeOutAndShiftDown(historico[-1]),
         )
         self.wait(1)
 
 class Geometria(Scene):   
-    def desenhar_fibonacci(self, n, wait_time=0, multiplicador=1, color="#43bfca", align=ORIGIN) -> VGroup:
+    def desenhar_fibonacci(self, n, wait_time=0, multiplicador=1, color="#43bfca", align=ORIGIN, labels_inside=False):
         try:
             if n < 1:
                 raise ValueError
@@ -310,6 +359,7 @@ class Geometria(Scene):
             fibonacci = lambda x: 1 if x <= 1 else fibonacci(x-1) + fibonacci(x-2)
 
             quadrados = VGroup()
+            legendas = VGroup()
             lados = {
                 0:DOWN,
                 1:RIGHT,
@@ -318,26 +368,37 @@ class Geometria(Scene):
             }
 
             # Cria o primeiro quadrado
-            tamanho = multiplicador
-            quadrados.add(Square(side_length = tamanho))
+            quadrados.add(Square(side_length = multiplicador))
             quadrados[-1].next_to(ORIGIN, DR, buff=0)
             
             # Se necessário, cria o restante
             if n > 1:
                 for i in range(1,n):
-                    tamanho = fibonacci(i) * multiplicador
-                    quadrados.add(Square(side_length = tamanho))
+                    tamanho = fibonacci(i)
+                    quadrados.add(Square(side_length = tamanho * multiplicador))
                     quadrados[-1].next_to(quadrados[:i], lados[i%4], buff=0)
+
+            if labels_inside:
+                for i in range(n):
+                    valor = fibonacci(i)
+                    legendas.add(TexMobject(valor))
+                    legendas[-1].scale(multiplicador * math.sqrt(valor))
 
             # Deixa a figura centralizada na tela e exibe animação
             quadrados.move_to(align)
             quadrados.set_color(color)
             for i in range(n):
                 self.play(
-                    ShowCreation(quadrados[i])
+                    ShowCreation(quadrados[i]),
                 )
+                if labels_inside:
+                    legendas[i].move_to(quadrados[i].get_center())
+                    self.play(FadeIn(legendas[i])) 
                 self.wait(wait_time)
-            return quadrados
+            if labels_inside:
+                return quadrados, legendas
+            else:
+                return quadrados
 
         except ValueError:
             print("Valor inserido é inválido! Tente com um valor maior ou igual a 1")
@@ -366,11 +427,11 @@ class Geometria(Scene):
     def construct(self):
         # Exibindo título e movendo para o topo
         titulo = TexMobject("\\text{Número de ouro}")
-        titulo.set_color(papoula)
+        titulo.set_color(PAPOULA)
         titulo_top = TexMobject("\\text{Abordagem geométrica}")
 
         titulo.scale(3.5)
-        titulo_top.set_color(papoula)
+        titulo_top.set_color(PAPOULA)
         titulo_top.scale(1)
         titulo_top.to_edge(UP)
 
@@ -378,16 +439,12 @@ class Geometria(Scene):
         self.play(
             FadeIn(titulo_top),
         )
-        # self.wait(2)
-
-        # self.play(
-        #     ReplacementTransform(titulo, titulo_top),
-        # )
         self.wait(1.5)
 
         # Desenhando os quadrados e os arcos
+        n = 8
         multiplicador = .25
-        quadrados = self.desenhar_fibonacci(8, multiplicador=multiplicador)
+        quadrados, legendas_quad = self.desenhar_fibonacci(n, multiplicador=multiplicador, labels_inside=True)
         arcos = self.desenhar_arcos(quadrados)
         self.wait(3)
 
@@ -410,29 +467,68 @@ class Geometria(Scene):
         
 
         # Exibe o valor
-        formula_str = '\\phi = {{ {} \\over {} }} = {}'.format(val_x, val_y, val_x/val_y)
+        num = f'{val_x}'
+        den = f'{val_y}'
+        val = '{}'.format(val_x/val_y)
+        # formula_str = '\\phi = {{ {} \\over {} }} = '.format(num, val_y)
         formula = TexMobject(
-            formula_str
+            '\\phi = {{ ',  # 0
+            num,            # 1
+            '\\over',       # 2
+            den,            # 3
+            '}} = ',        # 4
+            val,            # 5
         )
 
         legendas = VGroup(leg_x,leg_y)
         self.play(
             FadeOut(quadrados),
+            FadeOut(legendas_quad),
             FadeOut(x),
             FadeOut(y),
-            ReplacementTransform(legendas, formula)
+            ReplacementTransform(legendas, formula[:4]),
+        )
+        self.wait(2)
+        self.play(
+            FadeIn(formula[4:]),
+        )
+        self.wait(3)
+
+        # Continuar na sequencia de Fibonacci
+        fibonacci = lambda x: 1 if x <= 1 else fibonacci(x-1) + fibonacci(x-2)
+        valores = VGroup(*[TexMobject(fibonacci(i)) for i in range(n, n+14)])
+        for i in range(13):
+            time = -1.5/14*i + 1.5
+            self.play(
+                Transform(formula[3], valores[i].move_to(formula[3]), run_time=time),
+                Transform(formula[1], valores[i+1].move_to(formula[1]), run_time=time),
+                Transform(formula[5], TexMobject(f'{fibonacci(n+i+1)/fibonacci(n+i)}').move_to(formula[5]), run_time=time),
+            )
+            self.wait(time)
+
+        limite = TexMobject(
+            '\\lim_{x \\to \\infty} {F_{n+1} \\over F_{n}}',
+            '= 1.6180339887498948',
+        )
+        limite.next_to(formula[0], RIGHT)
+        self.play(
+            Transform(formula[1:4], limite[0]),
+            Transform(formula[4:], limite[1]),
+        )
+        self.play(
+            FadeToColor(limite[1], STARSHIP),
         )
 
         self.wait(5) 
 
         # Limpando Scene
         self.play(
+            FadeOut(limite[1]),
             FadeOut(formula),
             FadeOut(arcos),
             FadeOutAndShift(titulo_top, UP),
         )
-
-
+        self.wait(1)
 
 ############################################
 # Cena de fechamento
