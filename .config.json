@@ -1,0 +1,29 @@
+{
+    "destino_render": "Vídeos/",
+    "videos": [
+        {
+            "nome": "Número_de_ouro",
+            "caminho": "Número\\ de\\ ouro/ouro.py",
+            "lista_concat": "Número\\ de\\ ouro/list_ouro",
+            "num_scenes": 4
+        },
+        {
+            "nome": "Equivalência",
+            "caminho": "Lógica\\ Matemática/equivalencia.py",
+            "lista_concat": "Lógica\\ Matemática/list_equiv",
+            "num_scenes": 13
+        },
+        {
+            "nome": "Prolog_trace",
+            "caminho": "Lógica\\ Matemática/prolog_trace.py",
+            "lista_concat": "Lógica\\ Matemática/list_trace",
+            "num_scenes": 3
+        },
+        {
+            "nome": "Produtos_notáveis",
+            "caminho": "Produto\\ da\\ soma\\ pela\\ diferença/produto.py",
+            "lista_concat": "Produto\\ da\\ soma\\ pela\\ diferença/list_produto",
+            "num_scenes": 4
+        }
+    ]
+}
