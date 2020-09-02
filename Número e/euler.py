@@ -113,6 +113,51 @@ class Euler(Scene):
         )
         self.wait(5)
         
+class Juros(Scene):
+    def construct(self):
+        self.config()
+        self.introducao()
+    
+    def calcular_euler(self, x):
+        try:
+            return (1*(1/x))**x
+        except ZeroDivisionError:
+            pass
+
+    def config(self):
+        self.historia_do_banco = [
+            TextMobject(
+                """
+                Suponhamos um banco com 100% de taxa de juros ao ano.\\\\
+                Temos o seguinte financiamento:
+                """
+            ).to_edge(UP),
+            TextMobject(
+                """
+                Se o banco tiver uma taxa de juros 50% a cada semestre.\\\\
+                Temos o seguinte financiamento
+                """
+            ).to_edge(UP),
+            TextMobject(
+                """
+                Se o banco tiver uma taxa de juros de 33,3% a cada trimestre.\\\\
+                Temos o seguinte financiamento
+                """
+            ).to_edge(UP)
+        ]
+        
+    def introducao(self):
+        introducao = TextMobject( 
+            'Imagine que você tem R\$ 1,00 e deseja investir \\\\'
+            'esse dinheiro durante um ano'
+        )      
+
+        self.play(Write(introducao), run_time=3)
+        self.wait(3)
+        self.play(FadeOut(introducao))
+        self.wait()
+
+
 
 ############################################
 # Cena de fechamento
