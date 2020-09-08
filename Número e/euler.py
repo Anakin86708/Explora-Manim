@@ -117,6 +117,8 @@ class Juros(Scene):
     def construct(self):
         self.config()
         self.introducao()
+        self.aplicacao_juros()
+        self.conclusao()
     
     def calcular_euler(self, x):
         try:
@@ -128,36 +130,143 @@ class Juros(Scene):
         self.historia_do_banco = [
             TextMobject(
                 """
-                Suponhamos um banco com 100% de taxa de juros ao ano.\\\\
+                Suponhamos um banco com 100\% de taxa de juros ao ano.\n
                 Temos o seguinte financiamento:
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros 50% a cada semestre.\\\\
+                Se o banco tiver uma taxa de juros 50\% a cada semestre.\n
                 Temos o seguinte financiamento
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros de 33,3% a cada trimestre.\\\\
-                Temos o seguinte financiamento
+                Se o banco tiver uma taxa de juros de 33,3\% a cada\n 
+                quadrimestre. Temos o seguinte financiamento
                 """
             ).to_edge(UP)
         ]
+
+        tamanho_valores = 0.75
+
+        retas = [
+            Line(start=4.5*LEFT, end=4.5*RIGHT),
+            
+            Line(start=4.5*LEFT, end=0.75*LEFT),
+            Line(start=0.75*RIGHT, end=4.5*RIGHT),
+
+            Line(start=4.5*LEFT, end=2.5*LEFT),
+            Line(start=1*LEFT, end=1*RIGHT),
+            Line(start=2.5*RIGHT, end=4.5*RIGHT),
+        ]
+
+        valores = [
+            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
+            TexMobject("R\$2,00").move_to(5.25*RIGHT).scale(tamanho_valores),
+
+            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
+            TexMobject("R\$1,50").move_to(ORIGIN).scale(tamanho_valores),
+            TexMobject("R\$2,25").move_to(5.25*RIGHT).scale(tamanho_valores),
+
+            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
+            TexMobject("R\$1,33").move_to(1.75*LEFT).scale(tamanho_valores),
+            TexMobject("R\$1,76").move_to(1.75*RIGHT).scale(tamanho_valores),
+            TexMobject("R\$2,35").move_to(5.25*RIGHT).scale(tamanho_valores),
+        ] 
+
+        taxas = [
+            TextMobject("100\%").move_to(retas[0]).scale(tamanho_valores).shift(0.5*DOWN),
+
+            TextMobject("50\%").move_to(retas[1]).scale(tamanho_valores).shift(0.5*DOWN),
+            TextMobject("50\%").move_to(retas[2]).scale(tamanho_valores).shift(0.5*DOWN),
+            
+            TextMobject("33\%").move_to(retas[3]).scale(tamanho_valores).shift(0.5*DOWN),
+            TextMobject("33\%").move_to(retas[4]).scale(tamanho_valores).shift(0.5*DOWN),
+            TextMobject("33\%").move_to(retas[5]).scale(tamanho_valores).shift(0.5*DOWN)
+        ]
+
+        meses = [
+            TextMobject("12 meses").move_to(retas[0]).scale(tamanho_valores).shift(0.5*UP),
+
+            TextMobject("6 meses").move_to(retas[1]).scale(tamanho_valores).shift(0.5*UP),
+            TextMobject("6 meses").move_to(retas[2]).scale(tamanho_valores).shift(0.5*UP),
+            
+            TextMobject("4 meses").move_to(retas[3]).scale(tamanho_valores).shift(0.5*UP),
+            TextMobject("4 meses").move_to(retas[4]).scale(tamanho_valores).shift(0.5*UP),
+            TextMobject("4 meses").move_to(retas[5]).scale(tamanho_valores).shift(0.5*UP),
+        ]
+
+        self.grupos = [
+            VGroup(
+                valores[0],
+                valores[1],
+                retas[0],
+                meses[0],
+                taxas[0]
+            ),
+            VGroup(
+                valores[2],
+                valores[3],
+                valores[4],
+                retas[1],
+                retas[2],
+                meses[1],
+                meses[2],
+                taxas[1],
+                taxas[2]
+            ),
+            VGroup(
+                valores[5],
+                valores[6],
+                valores[7],
+                valores[8],
+                retas[3],
+                retas[4],
+                retas[5],
+                meses[3],
+                meses[4],
+                meses[5],
+                taxas[3],
+                taxas[4],
+                taxas[5]
+            )
+        ]
+
         
     def introducao(self):
-        introducao = TextMobject( 
-            'Imagine que você tem R\$ 1,00 e deseja investir \\\\'
-            'esse dinheiro durante um ano'
-        )      
+        introducao = TextMobject("""
+            Imagine que você tem R\$ 1,00 e deseja investir \n 
+            esse dinheiro durante um ano
+            """)      
 
         self.play(Write(introducao), run_time=3)
         self.wait(3)
         self.play(FadeOut(introducao))
         self.wait()
 
+    def aplicacao_juros(self):
+        for i in range(3):
+            self.play(Write(self.historia_do_banco[i]), run_time=2)
+            self.wait(4)
+            self.play(FadeIn(self.grupos[i]), run_time=2)
+            self.wait(4)
+            self.play(FadeOut(self.historia_do_banco[i]), FadeOut(self.grupos[i]))
 
+    def conclusao(self):
+        conclusao = TextMobject(
+            """
+            Percebemos que quanto maior a quantidade de\n 
+            empréstimos, mais próximo de um número o empréstimo \n 
+            resultará. Esse número é chamado de\n 
+            constante de euler e possui valor $e=2.71...$
+            """
+        ) 
+
+        self.play(Write(conclusao), run_time=3)
+        self.wait(3)
+        self.play(FadeOut(conclusao))
+        self.wait()
 
 ############################################
 # Cena de fechamento
