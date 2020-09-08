@@ -112,14 +112,15 @@ class Euler(Scene):
             Transform(serie, serie_fatorial),
         )
         self.wait(5)
-        
+
+
 class Juros(Scene):
     def construct(self):
         self.config()
         self.introducao()
         self.aplicacao_juros()
         self.conclusao()
-    
+
     def calcular_euler(self, x):
         try:
             return (1*(1/x))**x
@@ -149,10 +150,9 @@ class Juros(Scene):
         ]
 
         tamanho_valores = 0.75
-
         retas = [
             Line(start=4.5*LEFT, end=4.5*RIGHT),
-            
+
             Line(start=4.5*LEFT, end=0.75*LEFT),
             Line(start=0.75*RIGHT, end=4.5*RIGHT),
 
@@ -162,40 +162,46 @@ class Juros(Scene):
         ]
 
         valores = [
-            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
-            TexMobject("R\$2,00").move_to(5.25*RIGHT).scale(tamanho_valores),
+            TexMobject("R\$1,00").move_to(5.25*LEFT),
+            TexMobject("R\$2,00").move_to(5.25*RIGHT),
 
-            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
-            TexMobject("R\$1,50").move_to(ORIGIN).scale(tamanho_valores),
-            TexMobject("R\$2,25").move_to(5.25*RIGHT).scale(tamanho_valores),
+            TexMobject("R\$1,00").move_to(5.25*LEFT),
+            TexMobject("R\$1,50").move_to(ORIGIN),
+            TexMobject("R\$2,25").move_to(5.25*RIGHT),
 
-            TexMobject("R\$1,00").move_to(5.25*LEFT).scale(tamanho_valores),
-            TexMobject("R\$1,33").move_to(1.75*LEFT).scale(tamanho_valores),
-            TexMobject("R\$1,76").move_to(1.75*RIGHT).scale(tamanho_valores),
-            TexMobject("R\$2,35").move_to(5.25*RIGHT).scale(tamanho_valores),
-        ] 
+            TexMobject("R\$1,00").move_to(5.25*LEFT),
+            TexMobject("R\$1,33").move_to(1.75*LEFT),
+            TexMobject("R\$1,76").move_to(1.75*RIGHT),
+            TexMobject("R\$2,35").move_to(5.25*RIGHT),
+        ]
+
+        valores = [item.scale(tamanho_valores) for item in valores]
 
         taxas = [
-            TextMobject("100\%").move_to(retas[0]).scale(tamanho_valores).shift(0.5*DOWN),
+            TextMobject("100\%").move_to(retas[0]),
 
-            TextMobject("50\%").move_to(retas[1]).scale(tamanho_valores).shift(0.5*DOWN),
-            TextMobject("50\%").move_to(retas[2]).scale(tamanho_valores).shift(0.5*DOWN),
-            
-            TextMobject("33\%").move_to(retas[3]).scale(tamanho_valores).shift(0.5*DOWN),
-            TextMobject("33\%").move_to(retas[4]).scale(tamanho_valores).shift(0.5*DOWN),
-            TextMobject("33\%").move_to(retas[5]).scale(tamanho_valores).shift(0.5*DOWN)
+            TextMobject("50\%").move_to(retas[1]),
+            TextMobject("50\%").move_to(retas[2]),
+
+            TextMobject("33\%").move_to(retas[3]),
+            TextMobject("33\%").move_to(retas[4]),
+            TextMobject("33\%").move_to(retas[5])
         ]
+
+        taxas = [item.scale(tamanho_valores).shift(0.5*DOWN) for item in taxas]
 
         meses = [
-            TextMobject("12 meses").move_to(retas[0]).scale(tamanho_valores).shift(0.5*UP),
+            TextMobject("12 meses").move_to(retas[0]),
 
-            TextMobject("6 meses").move_to(retas[1]).scale(tamanho_valores).shift(0.5*UP),
-            TextMobject("6 meses").move_to(retas[2]).scale(tamanho_valores).shift(0.5*UP),
-            
-            TextMobject("4 meses").move_to(retas[3]).scale(tamanho_valores).shift(0.5*UP),
-            TextMobject("4 meses").move_to(retas[4]).scale(tamanho_valores).shift(0.5*UP),
-            TextMobject("4 meses").move_to(retas[5]).scale(tamanho_valores).shift(0.5*UP),
+            TextMobject("6 meses").move_to(retas[1]),
+            TextMobject("6 meses").move_to(retas[2]),
+
+            TextMobject("4 meses").move_to(retas[3]),
+            TextMobject("4 meses").move_to(retas[4]),
+            TextMobject("4 meses").move_to(retas[5]),
         ]
+
+        meses = [item.scale(tamanho_valores).shift(0.5*UP) for item in meses]
 
         self.grupos = [
             VGroup(
@@ -233,7 +239,6 @@ class Juros(Scene):
             )
         ]
 
-        
     def introducao(self):
         introducao = TextMobject("""
             Imagine que você tem R\$ 1,00 e deseja investir \n 
@@ -261,12 +266,13 @@ class Juros(Scene):
             resultará. Esse número é chamado de\n 
             constante de euler e possui valor $e=2.71...$
             """
-        ) 
+        )
 
         self.play(Write(conclusao), run_time=3)
         self.wait(3)
         self.play(FadeOut(conclusao))
         self.wait()
+
 
 ############################################
 # Cena de fechamento
