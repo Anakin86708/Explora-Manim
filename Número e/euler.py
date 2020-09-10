@@ -13,6 +13,7 @@
 # PAPOULA (laranja) : código Hex "#dc6a40"
 
 from manimlib.imports import *
+from math import e
 APATITA = "#43bfca"
 PAPOULA = "#dc6a40"
 STARSHIP = "#F2E33A"
@@ -272,6 +273,110 @@ class Juros(Scene):
         self.wait(3)
         self.play(FadeOut(conclusao))
         self.wait()
+
+
+class Grafico(GraphScene):
+    CONFIG = {
+        "x_min": 0,
+        "x_max": 10,
+        "y_min": 0,
+        "y_max": 3,
+        "y_axis_height": 5,
+        "x_axis_width": 10,
+        "x_tick_frequency": 1,
+        "y_tick_frequency": 1,
+        "y_labeled_nums": range(4),
+        "x_labeled_nums": range(11),
+        "exclude_zero_label": False,
+        "graph_origin": 3 * DOWN + 5 * LEFT,
+        "function_color": PAPOULA,
+        "axes_color": APATITA,
+    }
+
+    def func_graph(self, x):
+        return (1 + (1 / x)) ** x
+
+    def e_graph(self, x):
+        return e
+
+    def construct(self):
+        textos = VGroup(
+            TexMobject(
+                '\\text{Podemos escrever o problema anterior}\\\\'
+                '\\text{da seguinte forma}'
+            ),
+            TexMobject(
+                '\\text{Onde } n \\text{ representa o} \\\\'
+                '\\text{número de divisões que serão feitas no juros}'
+            )
+        )
+        legenda_limite = TexMobject(
+            '\\lim_{n \\to \\infty}',
+            '{(1 + {{1} \\over {n}})} ^ n',
+            '= e'
+            )
+        legenda_limite[1].move_to(ORIGIN)
+        textos.next_to(legenda_limite, UP)
+
+        # Animações
+        self.play(
+            Write(textos[0]),
+            ShowCreation(legenda_limite[1]),
+        )
+        self.wait(5)
+        self.play(
+            ReplacementTransform(textos[0], textos[1]),
+        )
+        self.wait(5)
+        self.play(
+            FadeOut(textos[1]),
+        )
+
+        # Criando o gráfico
+        self.setup_axes(animate=True)
+
+        graph_limite = self.get_graph(
+            self.func_graph,
+            self.function_color,
+            x_min=0,
+            x_max=10
+        )
+        graph_e = self.get_graph(
+            self.e_graph,
+            STARSHIP,
+            x_min=0,
+            x_max=10,
+        )
+
+        # legenda_limite.next_to(graph_limite, 0.05 * DOWN)
+
+        legenda_e = TexMobject('e')
+        legenda_e.next_to(graph_e, UP)
+
+        self.play(
+            ShowCreation(graph_limite),
+            ShowCreation(graph_e),
+            Write(legenda_e),
+            # Write(legenda_limite),
+        )
+        self.wait(5)
+
+        legenda_limite[0].next_to(legenda_limite[1], LEFT)
+        legenda_limite[2].next_to(legenda_limite[1], RIGHT)
+        self.play(
+            Write(legenda_limite[0]),
+            ReplacementTransform(legenda_e.copy(), legenda_limite[2]),
+        )
+        self.wait(5)
+
+        # Limpando Scene
+        self.play(
+            FadeOut(legenda_limite),
+            FadeOut(legenda_e),
+            FadeOut(graph_limite),
+            FadeOut(graph_e),
+            FadeOut(self.axes),
+        )
 
 
 ############################################
