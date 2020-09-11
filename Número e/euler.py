@@ -241,14 +241,38 @@ class Juros(Scene):
         ]
 
     def introducao(self):
+        titulo = TextMobject(
+            "Problema dos juros"
+        )
+        titulo.set_color(PAPOULA)
+        titulo.scale(2)
         introducao = TextMobject("""
-            Imagine que você tem R\$ 1,00 e deseja investir \n 
+            Imagine que você tem R\$ 1,00 e deseja investir \n
             esse dinheiro durante um ano
-            """)      
+            """)
 
-        self.play(Write(introducao), run_time=3)
+        self.play(
+            FadeIn(titulo),
+        )
         self.wait(3)
-        self.play(FadeOut(introducao))
+        self.play(
+            titulo.scale, .5,
+            run_time=1
+        )
+        self.wait(.2)
+        self.play(
+            titulo.to_edge, UP,
+        )
+        self.wait(.2)
+        self.play(
+            Write(introducao),
+            run_time=3
+            )
+        self.wait(3)
+        self.play(
+            FadeOut(introducao),
+            FadeOut(titulo),
+        )
         self.wait()
 
     def aplicacao_juros(self):
@@ -269,9 +293,14 @@ class Juros(Scene):
             """
         )
 
-        self.play(Write(conclusao), run_time=3)
+        self.play(
+            Write(conclusao),
+            run_time=3
+        )
         self.wait(3)
-        self.play(FadeOut(conclusao))
+        self.play(
+            FadeOut(conclusao)
+        )
         self.wait()
 
 
@@ -311,8 +340,8 @@ class Grafico(GraphScene):
             )
         )
         legenda_limite = TexMobject(
-            '\\lim_{n \\to \\infty}',
-            '{(1 + {{1} \\over {n}})} ^ n',
+            '\\lim_{x \\to \\infty}',
+            '{(1 + {{1} \\over {x}})} ^ x',
             '= e'
             )
         legenda_limite[1].move_to(ORIGIN)
@@ -418,3 +447,7 @@ class Fechamento(Scene):
         self.wait(2)
 ############################################
 ############################################
+
+## TODO
+# Colocar um intro para o tópico do Eric
+# Trocar variável para x na expressão do gráfico
