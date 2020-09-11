@@ -335,13 +335,13 @@ class Grafico(GraphScene):
                 '\\text{da seguinte forma}'
             ),
             TexMobject(
-                '\\text{Onde } n \\text{ representa o} \\\\'
-                '\\text{número de divisões que serão feitas no juros}'
+                '\\text{Onde } n \\text{ representa a} \\\\'
+                '\\text{quantidade de juros aplicados}'
             )
         )
         legenda_limite = TexMobject(
             '\\lim_{x \\to \\infty}',
-            '{(1 + {{1} \\over {x}})} ^ x',
+            '{\\left(1 + {{1} \\over {x}}\\right)} ^ x',
             '= e'
             )
         legenda_limite[1].move_to(ORIGIN)
