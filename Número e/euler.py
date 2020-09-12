@@ -56,9 +56,8 @@ class Euler(Scene):
         titulo_top.to_edge(UP)
 
         texto_inicial = TexMobject(
-            '\\text{Uma constante irracional e transcendental, ou seja,} \\\\'
-            '\\text{não pode ser escrito como uma simples fração e}\\\\'
-            '\\text{nem pode ser a solução para qualquer equação algébrica}'
+            '\\text{Uma constante irracional, ou seja,} \\\\'
+            '\\text{não pode ser escrito como uma simples fração.}'
         )
         texto_inicial.scale(.9)
 
@@ -94,7 +93,7 @@ class Euler(Scene):
         self.play(
             Write(texto_inicial),
         )
-        self.wait(15)
+        self.wait(8)
         self.play(
             FadeOut(texto_inicial),
         )
@@ -132,20 +131,20 @@ class Juros(Scene):
         self.historia_do_banco = [
             TextMobject(
                 """
-                Suponhamos um banco com 100\% de taxa de juros ao ano.\n
-                Temos o seguinte financiamento:
+                Suponhamos um banco com 100\%\n 
+                de taxa de juros ao ano. Temos
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros 50\% a cada semestre.\n
-                Temos o seguinte financiamento
+                Se o banco tiver uma taxa de juros 50\%\n
+                a cada semestre. Temos
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros de 33,3\% a cada\n 
-                quadrimestre. Temos o seguinte financiamento
+                Se o banco tiver uma taxa de juros de 33,3\%\n
+                a cada quadrimestre. Temos
                 """
             ).to_edge(UP)
         ]
@@ -248,7 +247,7 @@ class Juros(Scene):
         titulo.scale(2)
         introducao = TextMobject("""
             Imagine que você tem R\$ 1,00 e deseja investir \n
-            esse dinheiro durante um ano
+            esse dinheiro durante um ano.
             """)
 
         self.play(
@@ -286,10 +285,9 @@ class Juros(Scene):
     def conclusao(self):
         conclusao = TextMobject(
             """
-            Percebemos que quanto maior a quantidade de\n 
-            empréstimos, mais próximo de um número o empréstimo \n 
-            resultará. Esse número é chamado de\n 
-            constante de euler e possui valor $e=2.71...$
+            Percebemos que o valor do empréstimo se aproxima\n 
+            de um número. Essa é a constante de Euler e tem valor\n
+            $e=2.71...$
             """
         )
 
@@ -297,7 +295,7 @@ class Juros(Scene):
             Write(conclusao),
             run_time=3
         )
-        self.wait(3)
+        self.wait(5)
         self.play(
             FadeOut(conclusao)
         )
@@ -340,8 +338,8 @@ class Grafico(GraphScene):
             )
         )
         legenda_limite = TexMobject(
-            '\\lim_{x \\to \\infty}',
-            '{\\left(1 + {{1} \\over {x}}\\right)} ^ x',
+            '\\lim_{n \\to \\infty}',
+            '{\\left(1 + {{1} \\over {n}}\\right)} ^ n',
             '= e'
             )
         legenda_limite[1].move_to(ORIGIN)
