@@ -246,10 +246,12 @@ class Juros(Scene):
         )
         titulo.set_color(PAPOULA)
         titulo.scale(2)
-        introducao = TextMobject("""
+        introducao = TextMobject(
+            """
             Imagine que você tem R\$ 1,00 e deseja investir \n
             esse dinheiro durante um ano
-            """)
+            """
+        )
 
         self.play(
             FadeIn(titulo),
@@ -332,33 +334,61 @@ class Grafico(GraphScene):
         textos = VGroup(
             TexMobject(
                 '\\text{Podemos escrever o problema anterior}\\\\'
-                '\\text{da seguinte forma}'
+                '\\text{utilizando a formula de juros compostos}'
             ),
             TexMobject(
-                '\\text{Onde } n \\text{ representa a} \\\\'
-                '\\text{quantidade de juros aplicados}'
+                '\\text{Onde }C \\text{ representa o capital investido, }i \\text{ a taxa de juros, }\\\\'
+                't \\text{ o tempo que será aplicado, resultando no montante } M'
+            ),
+            TexMobject(
+                '\\text{Como a taxa de 100\% será dividida pelo tempo}\\\\'
+                '\\text{que será aplicado, podemos escrever como} {{1} \\over {t}} \\text{, assim como } C = 1'
             )
         )
-        legenda_limite = TexMobject(
+
+        juros_formula = TexMobject(
+            'M =',      # 0
+            'C',        # 1
+            '(1 + ',    # 2
+            'i',        # 3
+            ') ^',      # 4
+            't'         # 5
+        )
+        replace_i = TexMobject(
+            '{1 \\over t}'
+        )
+        limite_e = TexMobject(
             '\\lim_{x \\to \\infty}',
             '{\\left(1 + {{1} \\over {x}}\\right)} ^ x',
             '= e'
             )
-        legenda_limite[1].move_to(ORIGIN)
-        textos.next_to(legenda_limite, UP)
+        # limite_e[1].move_to(ORIGIN)
+        textos.next_to(limite_e, UP)
 
         # Animações
         self.play(
             Write(textos[0]),
-            ShowCreation(legenda_limite[1]),
+            ShowCreation(juros_formula),
         )
         self.wait(5)
+
         self.play(
             ReplacementTransform(textos[0], textos[1]),
         )
-        self.wait(5)
+        self.wait(7)
+
         self.play(
-            FadeOut(textos[1]),
+            ReplacementTransform(textos[1], textos[2]),
+            Transform(juros_formula[3], replace_i.move_to(juros_formula[3])),            
+            FadeOut(juros_formula[1]),
+        )
+        self.wait(.5)
+        self.play(
+            juros_formula[2:].next_to, juros_formula[0], RIGHT,
+        )
+        self.wait(7)
+        self.play(
+            FadeOut(textos[2]),
         )
 
         # Criando o gráfico
@@ -377,8 +407,6 @@ class Grafico(GraphScene):
             x_max=10,
         )
 
-        # legenda_limite.next_to(graph_limite, 0.05 * DOWN)
-
         legenda_e = TexMobject('e')
         legenda_e.next_to(graph_e, UP)
 
@@ -386,21 +414,27 @@ class Grafico(GraphScene):
             ShowCreation(graph_limite),
             ShowCreation(graph_e),
             Write(legenda_e),
-            # Write(legenda_limite),
         )
         self.wait(5)
 
-        legenda_limite[0].next_to(legenda_limite[1], LEFT)
-        legenda_limite[2].next_to(legenda_limite[1], RIGHT)
+        limite_e[0].next_to(limite_e[1], LEFT)
+        limite_e[2].next_to(limite_e[1], RIGHT)
         self.play(
-            Write(legenda_limite[0]),
-            ReplacementTransform(legenda_e.copy(), legenda_limite[2]),
+            ReplacementTransform(juros_formula[0], limite_e[2]),
+        )
+        self.wait(3)
+        self.play(
+            Write(limite_e[0]),
+        )
+        self.wait(1)
+        self.play(
+            ReplacementTransform(juros_formula[2:], limite_e[1]),
         )
         self.wait(5)
 
         # Limpando Scene
         self.play(
-            FadeOut(legenda_limite),
+            FadeOut(limite_e),
             FadeOut(legenda_e),
             FadeOut(graph_limite),
             FadeOut(graph_e),
@@ -449,5 +483,6 @@ class Fechamento(Scene):
 ############################################
 
 ## TODO
-# Colocar um intro para o tópico do Eric
-# Trocar variável para x na expressão do gráfico
+# Alterar animações da classe Euler para a nova ordem do vídeo
+# Reduzir texto
+# Mudar abordagem da expansão de série
