@@ -43,14 +43,10 @@ class Abertura(Scene):
 ############################################
 # Cena intermediárias
 ############################################
-class Euler(Scene):
+class Serie(Scene):
     def construct(self):
         # Exibindo título e movendo para o topo
-        titulo = TexMobject("\\text{Número de Euler}")
-        titulo.set_color(PAPOULA)
         titulo_top = TexMobject("\\text{Expansão de série}")
-
-        titulo.scale(2.5)
         titulo_top.set_color(PAPOULA)
         titulo_top.scale(1)
         titulo_top.to_edge(UP)
@@ -82,11 +78,8 @@ class Euler(Scene):
         )
 
         # Animações
-        self.add(titulo)
-        self.wait(1)
-
         self.play(
-            Transform(titulo, titulo_top),
+            Write(titulo_top),
         )
         self.wait(1.5)
 
@@ -240,29 +233,31 @@ class Juros(Scene):
         ]
 
     def introducao(self):
-        titulo = TextMobject(
-            "Problema dos juros"
-        )
+         # Exibindo título e movendo para o topo
+        titulo = TexMobject("\\text{Número de Euler}")
         titulo.set_color(PAPOULA)
-        titulo.scale(2)
+        titulo_top = TexMobject("\\text{Problema dos juros}")
+
+        titulo.scale(2.5)
+        titulo_top.set_color(PAPOULA)
+        titulo_top.scale(1)
+        titulo_top.to_edge(UP)
+        
         introducao = TextMobject("""
             Imagine que você tem R\$ 1,00 e deseja investir \n
             esse dinheiro durante um ano.
             """)
 
+        # Animações
+        self.add(titulo)
+        self.wait(1)
+
         self.play(
-            FadeIn(titulo),
+            Transform(titulo, titulo_top),
         )
-        self.wait(3)
-        self.play(
-            titulo.scale, .5,
-            run_time=1
-        )
-        self.wait(.2)
-        self.play(
-            titulo.to_edge, UP,
-        )
-        self.wait(.2)
+        self.wait(1.5)
+
+       
         self.play(
             Write(introducao),
             run_time=3
@@ -333,13 +328,13 @@ class Grafico(GraphScene):
                 '\\text{da seguinte forma}'
             ),
             TexMobject(
-                '\\text{Onde } n \\text{ representa a} \\\\'
+                '\\text{Onde } x \\text{ representa a} \\\\'
                 '\\text{quantidade de juros aplicados}'
             )
         )
         legenda_limite = TexMobject(
-            '\\lim_{n \\to \\infty}',
-            '{\\left(1 + {{1} \\over {n}}\\right)} ^ n',
+            '\\lim_{x \\to \\infty}',
+            '{\\left(1 + {{1} \\over {x}}\\right)} ^ x',
             '= e'
             )
         legenda_limite[1].move_to(ORIGIN)
@@ -422,7 +417,10 @@ class Fechamento(Scene):
         site.set_color(WHITE)
         site.shift(0.8*UP)
 
-        autor = TexMobject("\\text{Animações: Ariel Tadeu da Silva}")
+        autor = TexMobject(
+            "\\text{Animações: Ariel Tadeu da Silva}\\\\"
+            "\\text{Eric Satoshi Suzuki Kishimoto} \\\\"
+            )
         autor.scale(1.2)
         autor.set_color("#dc6a40")
         autor.shift(0.3*DOWN)
@@ -445,7 +443,3 @@ class Fechamento(Scene):
         self.wait(2)
 ############################################
 ############################################
-
-## TODO
-# Colocar um intro para o tópico do Eric
-# Trocar variável para x na expressão do gráfico
