@@ -112,7 +112,6 @@ class Juros(Scene):
         self.config()
         self.introducao()
         self.aplicacao_juros()
-        self.conclusao()
 
     def calcular_euler(self, x):
         try:
@@ -124,20 +123,20 @@ class Juros(Scene):
         self.historia_do_banco = [
             TextMobject(
                 """
-                Suponhamos um banco com 100\%\n 
-                de taxa de juros ao ano. Temos
+                Suponhamos um banco com uma aplicação\n
+                financeira que forneça 100\% de retorno ao final de um ano\n
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros 50\%\n
-                a cada semestre. Temos
+                Se o banco tiver um de retorno de 50\%\n
+                a cada semestre
                 """
             ).to_edge(UP),
             TextMobject(
                 """
-                Se o banco tiver uma taxa de juros de 33,3\%\n
-                a cada quadrimestre. Temos
+                Se o banco tiver um de retorno de 33,3\%\n
+                a cada quadrimestre
                 """
             ).to_edge(UP)
         ]
@@ -196,13 +195,22 @@ class Juros(Scene):
 
         meses = [item.scale(tamanho_valores).shift(0.5*UP) for item in meses]
 
+        formulas = [
+            TexMobject('2 = (1 + {{1} //over {1}})^1'),
+            TexMobject('2,25 = (1 + {{1} //over {2}})^2'),
+            TexMobject('2,37 = (1 + {{1} //over {3}})^3'),
+        ]
+
+        formulas = [item.shift(1.5*DOWN) for item in formulas]
+
         self.grupos = [
             VGroup(
                 valores[0],
                 valores[1],
                 retas[0],
                 meses[0],
-                taxas[0]
+                taxas[0],
+                formulas[0],
             ),
             VGroup(
                 valores[2],
@@ -213,7 +221,8 @@ class Juros(Scene):
                 meses[1],
                 meses[2],
                 taxas[1],
-                taxas[2]
+                taxas[2],
+                formulas[1],
             ),
             VGroup(
                 valores[5],
@@ -228,7 +237,8 @@ class Juros(Scene):
                 meses[5],
                 taxas[3],
                 taxas[4],
-                taxas[5]
+                taxas[5],
+                formulas[2],
             )
         ]
 
@@ -277,25 +287,6 @@ class Juros(Scene):
             self.wait(4)
             self.play(FadeOut(self.historia_do_banco[i]), FadeOut(self.grupos[i]))
 
-    def conclusao(self):
-        conclusao = TextMobject(
-            """
-            Percebemos que o valor do empréstimo se aproxima\n 
-            de um número. Essa é a constante de Euler e tem valor\n
-            $e=2.71...$
-            """
-        )
-
-        self.play(
-            Write(conclusao),
-            run_time=3
-        )
-        self.wait(5)
-        self.play(
-            FadeOut(conclusao)
-        )
-        self.wait()
-
 
 class Grafico(GraphScene):
     CONFIG = {
@@ -314,6 +305,25 @@ class Grafico(GraphScene):
         "function_color": PAPOULA,
         "axes_color": APATITA,
     }
+
+    def conclusao(self):
+        conclusao = TextMobject(
+            """
+            Percebemos que o valor do investimento se aproxima\n 
+            de um número. Essa é a constante de Euler e tem valor\n
+            $e=2.71...$
+            """
+        )
+
+        self.play(
+            Write(conclusao),
+            run_time=3
+        )
+        self.wait(5)
+        self.play(
+            FadeOut(conclusao)
+        )
+        self.wait()
 
     def func_graph(self, x):
         return (1 + (1 / x)) ** x
@@ -399,6 +409,8 @@ class Grafico(GraphScene):
             FadeOut(graph_e),
             FadeOut(self.axes),
         )
+        # Apresentando conclusão
+        self.conclusao()
 
 
 ############################################
@@ -443,3 +455,7 @@ class Fechamento(Scene):
         self.wait(2)
 ############################################
 ############################################
+
+# TODO
+# Colocar gráfico antes
+# Terminar outros ajustes [2, 4, 6]
