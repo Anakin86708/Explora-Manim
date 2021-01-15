@@ -24,6 +24,12 @@
             "caminho": "Produto\\ da\\ soma\\ pela\\ diferença/produto.py",
             "lista_concat": "Produto\\ da\\ soma\\ pela\\ diferença/list_produto",
             "num_scenes": 4
+        },
+        {
+            "nome": "Número_e",
+            "caminho": "Número\\ e/euler.py",
+            "lista_concat": "Número\\ e/list_e",
+            "num_scenes": 5
         }
     ]
 }

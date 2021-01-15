@@ -1,8 +1,21 @@
+#!/usr/bin/env python3
 import json
+import re
 import subprocess
-from os import path
-from os import system
+from os import path, system
+from sys import platform
 
+# Muda a resolução nos caminho dos arquivos
+def atualiza_lista(lista, resolucao):
+    lista = re.sub('\\\\','',lista)  # remove contrabarras
+    regex = '\d{3,4}p\d*'  # filtra pela resolução escrita no arquivo
+    with open(lista, 'r') as file_lista:
+        text = file_lista.read()
+        print(text)
+        matchs = re.sub(regex, f'{resolucao}p60', text)
+
+    with open(lista, 'w') as file_lista:
+        file_lista.write(matchs)
 
 def render(index_video, resolucao):
     # Inicia render
@@ -31,11 +44,17 @@ def render(index_video, resolucao):
     # Cria vídeo final
     destino_render = file['destino_render']
     lista = video_desejado['lista_concat']
+    atualiza_lista(lista, resolucao)
     query = f'ffmpeg -loglevel warning -f concat -safe 0 -i {lista} -c copy '\
         f'{destino_render}{resolucao}p60/{nome_desejado}_{resolucao}.mp4 <<< y'
     print(f'running {query}')
     subprocess.run(query, shell=True, executable='/bin/bash')
 
+if platform == 'win32':
+    print('Windows não é suportado por esse script...')
+    exit(1)
+else:
+    print(platform)
 
 # Lê a config, ou cria, se necessário
 try:
@@ -43,6 +62,7 @@ try:
 except FileNotFoundError:
     open('.config.json', 'x')
     config = open('.config.json', 'r')
+
 # Apresenta opções de render
 file = json.load(config)
 nomes_videos = [item['nome'] for item in file['videos']]
@@ -78,3 +98,6 @@ if ans == 0:
         render(index_video, resolucao)
 else:
     render(index_video, resolucao)
+
+## TODO
+# não funciona com resoluções diferentes das usadas nas listas

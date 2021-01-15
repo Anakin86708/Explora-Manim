@@ -14,3 +14,6 @@ Exemplo da execução do prolog
 
 ## Número de Ouro
 Explicação abordando o ponto de vista algébrico e geométrico, a partir da Sequência de Fibonacci
+
+## Número de Euler
+Formas de encontrar a constante *e*, assim como o problema dos juros
