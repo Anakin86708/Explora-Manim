@@ -196,9 +196,9 @@ class Juros(Scene):
         meses = [item.scale(tamanho_valores).shift(0.5*UP) for item in meses]
 
         formulas = [
-            TexMobject('2 = (1 + {{1} //over {1}})^1'),
-            TexMobject('2,25 = (1 + {{1} //over {2}})^2'),
-            TexMobject('2,37 = (1 + {{1} //over {3}})^3'),
+            TexMobject('2 = \\left (1 + {{1} \\over {1}} \\right )^1'),
+            TexMobject('2,25 = \\left (1 + {{1} \\over {2}} \\right )^2'),
+            TexMobject('2,37 = \\left (1 + {{1} \\over {3}} \\right )^3'),
         ]
 
         formulas = [item.shift(1.5*DOWN) for item in formulas]
